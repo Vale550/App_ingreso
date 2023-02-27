@@ -1,37 +1,38 @@
 //Librería JDBC
 package com.example.app_ingreso;
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-
-import java.sql.DriverManager;
-import java.sql.Statement;
-
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String URL = "jdbc:mysql://localhost:3306/bdd";
+    private static final String USER = "root";
+    private static final String PASSWORD = "";
     Button btnscan;
     Button btn_acp;
     EditText text;
+    TextView testtex;
     Button btn_bd;
     Button btn_menu;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,20 +45,12 @@ public class MainActivity extends AppCompatActivity {
         btn_bd = findViewById(R.id.btn_bd);
         btn_menu = findViewById(R.id.btn_menu);
 
-
         btn_acp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                try {
-                    int num = Integer.parseInt(text.getText().toString().trim());
-                    if (num == 5) {
-                        text.setText("a");
-                    }
-                } catch (Exception e){
-                    text.setText(" ");
-                };
+                    new Async().execute();
             }
         });
+
 
         btnscan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,40 +66,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null){
-            if (result.getContents() == null){
-                Toast.makeText (this, "Lectora cancelada", Toast.LENGTH_LONG).show();
-            }else{
-                Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
-                text.setText(result.getContents());
-            }
-        }else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    };
-    public void bdact (View view){
+
+    public void bdact(View view) {
         Intent intentbd = new Intent(this, BD.class);
         startActivity(intentbd);
     }
 
-    class Task extends AsyncTask<Void, Void, Void>{
-        String recorders="", error="";
+    class Async extends AsyncTask<Void, Void, Void> {
 
+        String records = "",error="";
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
+            try
+            {
+                String[] datosbn;
                 Class.forName("com.mysql.jdbc.Driver");
-                Connection conn = DriverManager.getConnection("192.168.0.4:3306/bdd", "test", "test");
-                Statement st = conn.createStatement();
-            }catch (Exception e){
+                Connection connection = DriverManager.getConnection("jdbc:mysql://sql10.freesqldatabase.com:3306/sql10600738", "sql10600738", "seqEnpF4C3");
+                Statement statement = connection.createStatement();
+                Statement statement2 = connection.createStatement();
+                ResultSet array = statement2.executeQuery("SELECT MAX(id) FROM 11Febrero;");
+                ResultSet resultSet = statement.executeQuery("SELECT DNI FROM 11Febrero");
+
+                if (array.next()){
+
+                    String num = array.getString(1);
+                    int numero = Integer.parseInt(num);
+                    datosbn = new String[numero];
+
+                    Log.d("Cantidad de filas", String.valueOf(numero));
+                }
+
+                while(resultSet.next()) {
+                    records += resultSet.getString(1) + "\n";
+                }
+            }
+            catch(Exception e)
+            {
                 error = e.toString();
             }
             return null;
         }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        testtex.setText(records);
+            if(error != "")
+                text.setText(error);
+            super.onPostExecute(aVoid);
+        }
     }
 
+}
 
 
     //metodo para insertar registros con texts
@@ -136,4 +145,54 @@ public class MainActivity extends AppCompatActivity {
 //        requestQueue.add(stringRequest);
 //    }
 
-}
+
+
+//public class MainActivity extends AppCompatActivity {
+//    private static final String URL = "jdbc:mysql://192.168.0.107:3306/kodejava";
+//    private static final String USER = "kodejava";
+//    private static final String PASSWORD = "kodejava";
+//
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_main);
+//
+//        new InfoAsyncTask().execute();
+//    }
+//
+//    @SuppressLint("StaticFieldLeak")
+//    public class InfoAsyncTask extends AsyncTask<Void, Void, Map<String, String>> {
+//        @Override
+//        protected Map<String, String> doInBackground(Void... voids) {
+//            Map<String, String> info = new HashMap<>();
+//
+//            try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+//                String sql = "SELECT name, address, phone_number FROM school_info LIMIT 1";
+//                PreparedStatement statement = connection.prepareStatement(sql);
+//                ResultSet resultSet = statement.executeQuery();
+//                if (resultSet.next()) {
+//                    info.put("name", resultSet.getString("name"));
+//                    info.put("address", resultSet.getString("address"));
+//                    info.put("phone_number", resultSet.getString("phone_number"));
+//                }
+//            } catch (Exception e) {
+//                Log.e("InfoAsyncTask", "Error reading school information", e);
+//            }
+//
+//            return info;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Map<String, String> result) {
+//            if (!result.isEmpty()) {
+//                TextView textViewName = findViewById(R.id.textViewName);
+//                TextView textViewAddress = findViewById(R.id.textViewAddress);
+//                TextView textViewPhoneNumber = findViewById(R.id.textViewPhone);
+//
+//                textViewName.setText(result.get("name"));
+//                textViewAddress.setText(result.get("address"));
+//                textViewPhoneNumber.setText(result.get("phone_number"));
+//            }
+//        }
+//    }
+//}
