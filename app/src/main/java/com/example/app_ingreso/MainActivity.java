@@ -47,13 +47,13 @@ public class MainActivity extends AppCompatActivity {
         text = findViewById(R.id.Texto);
         btn_bd = findViewById(R.id.btn_bd);
         btn_menu = findViewById(R.id.btn_menu);
-
         DbHelper dbHelper = new DbHelper(this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-
         btn_acp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                new Async().execute();
+                Async obj = new Async();
+                obj.query="SELECT dni FROM 28enero";
+                obj.execute();
             }
         });
 
@@ -92,7 +92,5 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intentbd);
 
     }
-
-
 }
 

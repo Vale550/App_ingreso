@@ -9,9 +9,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class Async extends AsyncTask<Void, Void, Void> {
-    String records = "", error = "";
 
-    int[] resultado;
+    public String query;
+    public String[] resultado;
     private String filas;
 
     @Override
@@ -23,19 +23,23 @@ public class Async extends AsyncTask<Void, Void, Void> {
             Statement statement = connection.createStatement();
             Statement statement2 = connection.createStatement();
             ResultSet array = statement2.executeQuery("SELECT MAX(id) FROM 28enero");
-            ResultSet resultSet = statement.executeQuery("SELECT DNI FROM 28enero");
+            ResultSet resultSet = statement.executeQuery(query);
 
             if (array.next()) {
                 filas = array.getString(1);
                 int numero = Integer.parseInt(filas);
                 Log.d("Cantidad de filas", String.valueOf(numero));
+                resultado = new String[numero];
+            }
+            int i=0;
+            while (resultSet.next()) {
+                resultado [i]= resultSet.getString(1);
+                Log.d("check", resultado[i]);
+                i++;
             }
 
-            while (resultSet.next()) {
-                records += resultSet.getString(1) + "\n";
-            }
         } catch (Exception e) {
-            error = e.toString();
+           //error
         }
         return null;
     }
@@ -43,7 +47,7 @@ public class Async extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         //testtex.setText(records);
-        if (error != "")
+        //if (error != "")
             //text.setText(error);
             super.onPostExecute(aVoid);
     }
