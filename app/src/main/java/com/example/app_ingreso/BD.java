@@ -34,20 +34,20 @@ public class BD extends AppCompatActivity {
         btm_cargar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Async().execute();
-                DbHelper dbHelper = new DbHelper(BD.this);
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                if (db != null){
-                    Async mtd = new Async();
-                    mtd.doInBackground();
-                   // for (String dato : mtd.datos) {
-                   //     db.execSQL("INSERT INTO comments (user, comment) VALUES ('Digital Learning','Esto es un comentario insertado usando el método execSQL()')");
-                   // }
-
-                    Toast.makeText(BD.this, "Base de datos creada", Toast.LENGTH_LONG).show();
-                }else {
-                    Toast.makeText(BD.this, "Error", Toast.LENGTH_LONG).show();
-                }
+//                new Async().execute();
+//                DbHelper dbHelper = new DbHelper(BD.this);
+//                SQLiteDatabase db = dbHelper.getWritableDatabase();
+//                if (db != null){
+//                    Async mtd = new Async();
+//                    mtd.doInBackground();
+//                   // for (String dato : mtd.datos) {
+//                   //     db.execSQL("INSERT INTO comments (user, comment) VALUES ('Digital Learning','Esto es un comentario insertado usando el método execSQL()')");
+//                   // }
+//
+//                    Toast.makeText(BD.this, "Base de datos creada", Toast.LENGTH_LONG).show();
+//                }else {
+//                    Toast.makeText(BD.this, "Error", Toast.LENGTH_LONG).show();
+//                }
             }
         });
 
