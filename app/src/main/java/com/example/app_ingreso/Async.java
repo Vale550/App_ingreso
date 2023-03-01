@@ -11,8 +11,8 @@ import java.sql.Statement;
 public class Async extends AsyncTask<Void, Void, Void> {
     String records = "", error = "";
 
-    int id;
-
+    int[] resultado;
+    private String filas;
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -26,11 +26,8 @@ public class Async extends AsyncTask<Void, Void, Void> {
             ResultSet resultSet = statement.executeQuery("SELECT DNI FROM 28enero");
 
             if (array.next()) {
-
-                String num = array.getString(1);
-                int numero = Integer.parseInt(num);
-                datosbn = new String[numero];
-
+                filas = array.getString(1);
+                int numero = Integer.parseInt(filas);
                 Log.d("Cantidad de filas", String.valueOf(numero));
             }
 
