@@ -30,9 +30,6 @@ public class Menu extends AppCompatActivity {
     Button btning;
     EditText usuario,contrasena;
     RequestQueue requestQueue;
-    public int cuonter;
-
-    public String [] resl;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,22 +41,29 @@ public class Menu extends AppCompatActivity {
         btning.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php");
+                String user = usuario.getText().toString();
+                String pass = contrasena.getText().toString();
+                if (user != "" && pass != "") {
+                    Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
+                }
             }
         });
 
     }
 
-    public void Loaduser(String URL){
+    public void Loaduser(String URL,String nombre,String contra){
         JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 JSONObject jsonObject = null;
                 for (int i = 0; i < response.length(); i++) {
                     try {
-                        resl = new String[response.length()];
                         jsonObject = response.getJSONObject(i);
-                        resl[i]=jsonObject.getString("id");
+                        jsonObject.getString("username");
+                        Log.d("D",jsonObject.getString("username"));
+                        Log.d("D",jsonObject.getString("password"));
+                        Log.d("D2",nombre+contra);
+
 
                     } catch (JSONException e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
