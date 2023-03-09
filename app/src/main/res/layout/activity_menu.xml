@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/textUser"
+        android:id="@+id/Usuario"
         android:layout_width="231dp"
         android:layout_height="37dp"
         android:layout_marginStart="88dp"
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/textPass"
+        android:id="@+id/Contrasena"
         android:layout_width="231dp"
         android:layout_height="37dp"
         android:layout_marginStart="88dp"

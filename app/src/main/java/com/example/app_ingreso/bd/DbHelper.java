@@ -16,6 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    //Crea BDlocal
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
