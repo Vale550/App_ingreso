@@ -45,9 +45,6 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/bdd";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
     Button btnscan;
     Button btn_acp;
     EditText text;
@@ -62,10 +59,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DbHelper bdobj = new DbHelper(this);
-        //getReadableDatabase(); //solo para leer
-        SQLiteDatabase db = bdobj.getWritableDatabase();
-        //db.execSQL("");//(no trae datos pero ejecuta todo)
 
         btnscan = findViewById(R.id.btn_scan);
         btn_acp = findViewById(R.id.btn_aceptar);
