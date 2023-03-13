@@ -2,25 +2,29 @@
 package com.example.app_ingreso;
 
 
+import java.sql.Array;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -32,45 +36,35 @@ import com.example.app_ingreso.bd.DbHelper;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MainActivity extends AppCompatActivity {
-    private Window window;
-    String primary = "#0E7827";
-    String primary2 = "#DC3F11";
-    String primary3 = "#FF8000";
-    private static final String URL = "jdbc:mysql://localhost:3306/bdd";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
-    ImageButton btnscan;
+
+    Button btnscan;
     Button btn_acp;
     EditText text;
+    Button btn_bd;
+    Button btn_menu;
     RequestQueue requestQueue;
-    ImageView imgOk, imgError;
 
     //Crea el main
-    @SuppressLint({"MissingInflatedId", "WrongViewCast"})
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.window = getWindow();
-        DbHelper bdobj = new DbHelper(this);
-        //getReadableDatabase(); //solo para leer
-        SQLiteDatabase db = bdobj.getWritableDatabase();
-        //db.execSQL("");//(no trae datos pero ejecuta
+
 
         btnscan = findViewById(R.id.btn_scan);
         btn_acp = findViewById(R.id.btn_aceptar);
         text = findViewById(R.id.Texto);
-        imgOk= findViewById(R.id.imgOk);
-        imgError= findViewById(R.id.imgError);
-
+        btn_bd = findViewById(R.id.btn_bd);
+        btn_menu = findViewById(R.id.btn_menu);
         btn_acp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
@@ -113,21 +107,17 @@ public class MainActivity extends AppCompatActivity {
                 String[] parts = res.split("@");
                 String dni = parts[4]; // 654321
                 bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo="+dni);
-                text.setText(dni);
-
             }
         }else {
             super.onActivityResult(requestCode, resultcode, data);
         }
     }
-    private void cambiaColorOK (String primary){
-        window.setStatusBarColor(Color.parseColor(primary));
-        window.setNavigationBarColor(Color.parseColor(primary));
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor(primary)));
-        btnscan.setBackgroundColor(Color.parseColor(primary));
-        btn_acp.setBackgroundColor(Color.parseColor(primary));
-    }
 
+    //Cambio de ventana
+    public void bdact(View view) {
+//        Intent intentbd = new Intent(this, BD.class);
+//        startActivity(intentbd);
+    }
 
     //Insertar/actualizar BDN
     private void bdnpost (String URL){
@@ -143,40 +133,20 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
-                    cambiaColorOK(primary2);
-                    imgError.setVisibility(View.VISIBLE);
-                    imgOk.setVisibility(View.INVISIBLE);
                 }
             }){
                 @Nullable
                 @Override
-                protected Map<String, String> getParams() {
+                protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String,String> parametros = new HashMap<String, String>();
                     Log.d("codigo",text.getText().toString());
                     parametros.put("codigo",text.getText().toString());
-                    cambiaColorOK(primary);
-                    imgOk.setVisibility(View.VISIBLE);
-                    imgError.setVisibility(View.INVISIBLE);
-
                     return parametros;
-
                 }
             };
             requestQueue = Volley.newRequestQueue(this);
             requestQueue.add(stringRequest);
-            new CountDownTimer(1500, 1500) {
-                @Override
-                public void onTick(long millisUntilFinished) {
 
-                }
-
-                @Override
-                public void onFinish() {
-                    cambiaColorOK(primary3);
-                    //imgOk.setVisibility(View.INVISIBLE);
-                }
-
-            }.start();
         } catch (Exception e) {
             Log.d("D1","Error");
         }
@@ -215,3 +185,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+
