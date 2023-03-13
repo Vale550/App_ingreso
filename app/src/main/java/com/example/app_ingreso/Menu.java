@@ -1,10 +1,7 @@
 package com.example.app_ingreso;
 
-import android.annotation.SuppressLint;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,10 +20,8 @@ import com.example.app_ingreso.bd.DbHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.Objects;
-import java.util.Timer;
 
 
 public class Menu extends AppCompatActivity {
@@ -42,14 +37,11 @@ public class Menu extends AppCompatActivity {
         usuario = findViewById(R.id.Usuario);
         contrasena = findViewById(R.id.Contrasena);
 
-        btning.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String user = usuario.getText().toString();
-                String pass = contrasena.getText().toString();
-                if (user != "" && pass != "") {
-                    Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
-                }
+        btning.setOnClickListener(v -> {
+            String user = usuario.getText().toString();
+            String pass = contrasena.getText().toString();
+            if (user != "" && pass != "") {
+                Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
             }
         });
 
@@ -68,40 +60,32 @@ public class Menu extends AppCompatActivity {
     }
 
     public void Loaduser(String URL,String nombre,String contra){
-        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                JSONObject jsonObject = null;
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        jsonObject = response.getJSONObject(i);
-                        jsonObject.getString("username");
+        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, response -> {
+            JSONObject jsonObject = null;
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    jsonObject = response.getJSONObject(i);
+                    jsonObject.getString("username");
 
-                        String nombreb=jsonObject.getString("username");
-                        String contrab=jsonObject.getString("password");
-                        String localb=jsonObject.getString("nroLocal");
+                    String nombreb=jsonObject.getString("username");
+                    String contrab=jsonObject.getString("password");
+                    String localb=jsonObject.getString("nroLocal");
 
-                        if (Objects.equals(nombre, nombreb) && Objects.equals(contra,contrab)){
-                            Log.d("D3","Paso");
-                            Log.d("Local",localb);
-                            LoadEventos("https://appingresos.000webhostapp.com/Busquedatablas.php",localb);
+                    if (Objects.equals(nombre, nombreb) && Objects.equals(contra,contrab)){
+                        Log.d("D3","Paso");
+                        Log.d("Local",localb);
+                        LoadEventos("https://appingresos.000webhostapp.com/Busquedatablas.php",localb);
 
-                        }else {
-                            Log.d("D3","error");
-                        }
-
-                    } catch (JSONException e) {
-                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }else {
+                        Log.d("D3","error");
                     }
-                }
 
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error de Conexión", Toast.LENGTH_SHORT).show();
-            }
-        }
+
+        }, error -> Toast.makeText(getApplicationContext(), "Error de Conexión", Toast.LENGTH_SHORT).show()
         );
         requestQueue= Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
@@ -129,12 +113,7 @@ public class Menu extends AppCompatActivity {
                 }
 
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error de 2", Toast.LENGTH_SHORT).show();
-            }
-        }
+        }, error -> Toast.makeText(getApplicationContext(), "Error de 2", Toast.LENGTH_SHORT).show()
         );
         requestQueue= Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
@@ -162,11 +141,8 @@ public class Menu extends AppCompatActivity {
                 }
 
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+        }, error -> {
 
-            }
         }
         );
         requestQueue= Volley.newRequestQueue(this);

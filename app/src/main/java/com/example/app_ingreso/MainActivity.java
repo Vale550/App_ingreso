@@ -39,7 +39,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-<<<<<<< HEAD
 public class MainActivity extends AppCompatActivity {
     private Window window;
     String primary = "#0E7827";
@@ -49,9 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String USER = "root";
     private static final String PASSWORD = "";
     ImageButton btnscan;
-=======
-    Button btnscan;
->>>>>>> origin/main
+
     Button btn_acp;
     EditText text;
     RequestQueue requestQueue;
@@ -63,15 +60,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-<<<<<<< HEAD
+
         this.window = getWindow();
         DbHelper bdobj = new DbHelper(this);
         //getReadableDatabase(); //solo para leer
         SQLiteDatabase db = bdobj.getWritableDatabase();
         //db.execSQL("");//(no trae datos pero ejecuta
-=======
 
->>>>>>> origin/main
 
         btnscan = findViewById(R.id.btn_scan);
         btn_acp = findViewById(R.id.btn_aceptar);

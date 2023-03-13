@@ -4,118 +4,149 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relativeLayout2"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:actionBarNavMode="list"
+    tools:actionBarNavMode="standard"
     tools:context=".MainActivity">
 
     <EditText
         android:id="@+id/Texto"
         android:layout_width="285dp"
         android:layout_height="62dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="20dp"
         android:ems="10"
         android:hint="@string/stringDNI"
         android:importantForAutofill="no"
         android:inputType="number"
-        tools:ignore="DuplicateSpeakableTextCheck"
-        tools:layout_editor_absoluteX="60dp"
-        tools:layout_editor_absoluteY="96dp" />
+        app:layout_constraintBottom_toTopOf="@+id/btn_aceptar"
+        app:layout_constraintEnd_toStartOf="@+id/btn_scan"
+        app:layout_constraintStart_toEndOf="@+id/navigationView"
+        app:layout_constraintTop_toBottomOf="@+id/txtIngreso"
+        tools:ignore="DuplicateSpeakableTextCheck,MissingConstraints" />
 
     <Button
         android:id="@+id/btn_aceptar"
         android:layout_width="184dp"
         android:layout_height="66dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="92dp"
         android:text="@string/aceptar1"
         android:textColor="#FFFFFF"
-        tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck"
-        tools:layout_editor_absoluteX="114dp"
-        tools:layout_editor_absoluteY="178dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Texto"
+        tools:ignore="DuplicateSpeakableTextCheck,MissingConstraints,TextContrastCheck" />
 
     <ImageButton
         android:id="@+id/btn_scan"
         android:layout_width="63dp"
         android:layout_height="62dp"
+        android:layout_marginTop="96dp"
+        android:layout_marginEnd="4dp"
         android:contentDescription="@string/aceptar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/presence_video_away"
-        tools:ignore="ImageContrastCheck"
-        tools:layout_editor_absoluteX="344dp"
-        tools:layout_editor_absoluteY="96dp" />
+        tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/txtIngreso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
+        android:layout_marginEnd="194dp"
         android:text="@string/ingrese_dni_o_idticket"
         android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="60dp" />
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/imgEntradasCompradas"
         android:layout_width="104dp"
         android:layout_height="81dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="8dp"
         android:contentDescription="@string/com3"
+        app:layout_constraintStart_toEndOf="@+id/navigationView"
+        app:layout_constraintTop_toBottomOf="@+id/imgError"
         app:srcCompat="@drawable/comp"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="72dp"
-        tools:layout_editor_absoluteY="404dp" />
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/imgEntradasUsadas"
         android:layout_width="98dp"
         android:layout_height="85dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="36dp"
         android:contentDescription="@string/usadas1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgError"
         app:srcCompat="@drawable/ok"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="257dp"
-        tools:layout_editor_absoluteY="400dp" />
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/txtEntradasCompradas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="92dp"
+        android:layout_marginBottom="88dp"
         android:text="@string/textview2"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="93dp"
-        tools:layout_editor_absoluteY="513dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/navigationView"
+        tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/txtEntradasUsadas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="48dp"
+        android:layout_marginBottom="88dp"
         android:text="@string/textview1"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="274dp"
-        tools:layout_editor_absoluteY="513dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/imgOk"
         android:layout_width="108dp"
         android:layout_height="130dp"
+        android:layout_marginStart="129dp"
+        android:layout_marginEnd="121dp"
         android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/navigationView"
+        app:layout_constraintTop_toBottomOf="@+id/btn_aceptar"
         app:srcCompat="@drawable/pngwing_com"
-        tools:ignore="ContentDescription"
-        tools:layout_editor_absoluteX="151dp"
-        tools:layout_editor_absoluteY="258dp" />
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/imgError"
         android:layout_width="108dp"
         android:layout_height="131dp"
+        android:layout_marginStart="129dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="121dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@string/todo"
         android:visibility="invisible"
-        app:srcCompat="@drawable/error"
-        tools:layout_editor_absoluteX="151dp"
-        tools:layout_editor_absoluteY="258dp" />
+        app:layout_constraintBottom_toTopOf="@+id/imgEntradasCompradas"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/navigationView"
+        app:layout_constraintTop_toBottomOf="@+id/btn_aceptar"
+        app:srcCompat="@drawable/error" />
 
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView"
         android:layout_width="55dp"
         android:layout_height="600dp"
+        android:layout_marginEnd="4dp"
         android:background="#6E0808"
         android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@+id/Texto"
+        app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteY="1dp" />
 
