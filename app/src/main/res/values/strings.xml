@@ -3,4 +3,12 @@
     <string name="contrase_a">Contraseña</string>
     <string name="aceptar">Aceptar</string>
     <string name="nombre">Nombre</string>
+    <string name="stringDNI">Ingrese DNI o IDTicket</string>
+    <string name="aceptar1">Aceptar</string>
+    <string name="textview1">TextView</string>
+    <string name="ingrese_dni_o_idticket">Ingrese DNI o IDTicket</string>
+    <string name="usadas1">usadas</string>
+    <string name="textview2">TextView</string>
+    <string name="com3">com</string>
+    <string name="todo">TODO</string>
 </resources>
