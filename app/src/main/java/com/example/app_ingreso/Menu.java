@@ -1,9 +1,9 @@
 package com.example.app_ingreso;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.app_ingreso.bd.DbHelper;
@@ -46,17 +45,20 @@ public class Menu extends AppCompatActivity {
         });
 
     }
-    public void carga (String nom){
-        //NOTA:no se cargar tablas en la local que vienen directamente
+    public boolean carga (String nom){
+        //NOTA:no se puede cargar tablas en la local que vienen directamente
         //de la base de datos en la nube porque no reconoce las variables
         //porlotanto se deben cargar con "?"+variable
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         String a = "a"+nom;
-        db.execSQL("CREATE TABLE " + a + "(" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "idticket INTEGER NOT NULL," +
-                "DNI INTEGER NOT NULL," +
-                "estado TEXT NOT NULL)");
+        try {
+            db.execSQL("CREATE TABLE " + a + "(" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "idticket INTEGER NOT NULL," +
+                    "DNI INTEGER NOT NULL," +
+                    "estado TEXT NOT NULL)");
+            return true;
+        }catch (Exception e){return false;}
     }
 
     public void Loaduser(String URL,String nombre,String contra){
@@ -103,15 +105,17 @@ public class Menu extends AppCompatActivity {
                         String nrolocalb=jsonObject.getString("nroLocal");
                         String eventob=jsonObject.getString("nombreEvento");
                         if (Objects.equals(nrolocalb, nrolocal)){
-                            carga(eventob);
-                            LoadTablas("https://appingresos.000webhostapp.com/Cargartabla.php?tabla="+eventob,eventob);
+                            if (carga(eventob)) {
+                                LoadTablas("https://appingresos.000webhostapp.com/Cargartabla.php?tabla=" + eventob, eventob);
+                            }
                         }
 
                     } catch (JSONException e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
-
+                Intent intent= new Intent (Menu.this, MainActivity.class);
+                startActivity(intent);
             }
         }, error -> Toast.makeText(getApplicationContext(), "Error de 2", Toast.LENGTH_SHORT).show()
         );

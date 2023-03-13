@@ -95,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
                 integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-                integrator.setPrompt("Lector - CDP");
-                integrator.setCameraId(0);
+                integrator.setOrientationLocked(false);
+                integrator.setPrompt("Lector QR");
                 integrator.setBeepEnabled(true);
                 integrator.setBarcodeImageEnabled(true);
                 integrator.initiateScan();
