@@ -1,68 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:id="@+id/relativeLayout2"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:actionBarNavMode="list"
     tools:context=".MainActivity">
 
     <EditText
         android:id="@+id/Texto"
-        android:layout_width="410dp"
-        android:layout_height="75dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="-3dp"
-        android:layout_marginTop="27dp"
+        android:layout_width="285dp"
+        android:layout_height="62dp"
         android:ems="10"
-        android:inputType="number" />
-
-    <Button
-        android:id="@+id/btn_scan"
-        android:layout_width="wrap_content"
-        android:layout_height="119dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="-2dp"
-        android:layout_marginTop="251dp"
-        android:layout_marginEnd="-2dp"
-        android:text="Scan" />
+        android:hint="@string/stringDNI"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        tools:ignore="DuplicateSpeakableTextCheck"
+        tools:layout_editor_absoluteX="60dp"
+        tools:layout_editor_absoluteY="96dp" />
 
     <Button
         android:id="@+id/btn_aceptar"
-        android:layout_width="match_parent"
-        android:layout_height="89dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="-1dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="389dp"
-        android:text="Aceptar" />
+        android:layout_width="184dp"
+        android:layout_height="66dp"
+        android:text="@string/aceptar1"
+        android:textColor="#FFFFFF"
+        tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck"
+        tools:layout_editor_absoluteX="114dp"
+        tools:layout_editor_absoluteY="178dp" />
 
-    <Button
-        android:id="@+id/btn_menu"
-        android:layout_width="205dp"
-        android:layout_height="89dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginBottom="0dp"
-        android:text="Menu" />
+    <ImageButton
+        android:id="@+id/btn_scan"
+        android:layout_width="63dp"
+        android:layout_height="62dp"
+        android:contentDescription="@string/aceptar"
+        app:srcCompat="@android:drawable/presence_video_away"
+        tools:ignore="ImageContrastCheck"
+        tools:layout_editor_absoluteX="344dp"
+        tools:layout_editor_absoluteY="96dp" />
 
-    <Button
-        android:id="@+id/btn_bd"
-        android:layout_width="197dp"
-        android:layout_height="90dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
-        android:onClick="bdact"
-        android:text="Base de datos" />
-</RelativeLayout>
+    <TextView
+        android:id="@+id/txtIngreso"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ingrese_dni_o_idticket"
+        android:textSize="16sp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="80dp"
+        tools:layout_editor_absoluteY="60dp" />
+
+    <ImageView
+        android:id="@+id/imgEntradasCompradas"
+        android:layout_width="104dp"
+        android:layout_height="81dp"
+        android:contentDescription="@string/com3"
+        app:srcCompat="@drawable/comp"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="72dp"
+        tools:layout_editor_absoluteY="404dp" />
+
+    <ImageView
+        android:id="@+id/imgEntradasUsadas"
+        android:layout_width="98dp"
+        android:layout_height="85dp"
+        android:contentDescription="@string/usadas1"
+        app:srcCompat="@drawable/ok"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="257dp"
+        tools:layout_editor_absoluteY="400dp" />
+
+    <TextView
+        android:id="@+id/txtEntradasCompradas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textview2"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="93dp"
+        tools:layout_editor_absoluteY="513dp" />
+
+    <TextView
+        android:id="@+id/txtEntradasUsadas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textview1"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="274dp"
+        tools:layout_editor_absoluteY="513dp" />
+
+    <ImageView
+        android:id="@+id/imgOk"
+        android:layout_width="108dp"
+        android:layout_height="130dp"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/pngwing_com"
+        tools:ignore="ContentDescription"
+        tools:layout_editor_absoluteX="151dp"
+        tools:layout_editor_absoluteY="258dp" />
+
+    <ImageView
+        android:id="@+id/imgError"
+        android:layout_width="108dp"
+        android:layout_height="131dp"
+        android:contentDescription="@string/todo"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/error"
+        tools:layout_editor_absoluteX="151dp"
+        tools:layout_editor_absoluteY="258dp" />
+
+    <com.google.android.material.navigation.NavigationView
+        android:layout_width="55dp"
+        android:layout_height="600dp"
+        android:background="#6E0808"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="1dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
