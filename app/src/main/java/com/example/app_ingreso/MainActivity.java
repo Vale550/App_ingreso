@@ -5,6 +5,7 @@ package com.example.app_ingreso;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -48,11 +50,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String USER = "root";
     private static final String PASSWORD = "";
     ImageButton btnscan;
-
+    ConstraintLayout navigationView;
     Button btn_acp;
     EditText text;
     RequestQueue requestQueue;
-    ImageView imgOk, imgError;
+    ImageView imgOk, imgError, imgHome, imgList;
+
+    DbHelper dbHelper = new DbHelper(MainActivity.this);
 
     //Crea el main
     @SuppressLint({"MissingInflatedId", "WrongViewCast"})
@@ -73,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
         text = findViewById(R.id.Texto);
         imgOk= findViewById(R.id.imgOk);
         imgError= findViewById(R.id.imgError);
+        imgHome= findViewById(R.id.imgHome);
+        imgList= findViewById(R.id.imgList);
+        navigationView= findViewById(R.id.navigationView);
+
 
         btn_acp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -117,7 +125,14 @@ public class MainActivity extends AppCompatActivity {
                 String dni = parts[4]; // 654321
                 bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo="+dni);
                 text.setText(dni);
-
+                modifica(dni);
+                if (modifica(dni)){
+                    cambiaColorOK(primary);
+                    imgOk.setVisibility(View.VISIBLE);
+                    imgError.setVisibility(View.INVISIBLE);
+                } else {
+                    cambiaColorOK(primary2);
+                }
             }
         }else {
             super.onActivityResult(requestCode, resultcode, data);
@@ -149,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     cambiaColorOK(primary2);
                     imgError.setVisibility(View.VISIBLE);
                     imgOk.setVisibility(View.INVISIBLE);
+
                 }
             }){
                 @Nullable
@@ -157,9 +173,6 @@ public class MainActivity extends AppCompatActivity {
                     Map<String,String> parametros = new HashMap<String, String>();
                     Log.d("codigo",text.getText().toString());
                     parametros.put("codigo",text.getText().toString());
-                    cambiaColorOK(primary);
-                    imgOk.setVisibility(View.VISIBLE);
-                    imgError.setVisibility(View.INVISIBLE);
 
                     return parametros;
 
@@ -184,6 +197,15 @@ public class MainActivity extends AppCompatActivity {
             Log.d("D1","Error");
         }
 
+    }
+    public boolean modifica (String dni){
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        try {
+            db.execSQL("UPDATE '28enero' SET estado='invalida' WHERE estado='invalida' AND DNI=dni");
+            return true;
+        }catch (Exception e){return false;}
     }
 
     //Consultas BDN
