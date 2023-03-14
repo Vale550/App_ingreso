@@ -43,8 +43,6 @@ public class Menu extends AppCompatActivity {
             if (user != "" && pass != "") {
                 Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
             }
-            Intent act = new Intent(this, Selevento.class);
-            startActivity(act);
         });
 
     }
@@ -92,6 +90,8 @@ public class Menu extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
+            Intent act = new Intent(this, Selevento.class);
+            startActivity(act);
 
         }, error -> Toast.makeText(getApplicationContext(), "Error de Conexión", Toast.LENGTH_SHORT).show()
         );

@@ -32,8 +32,10 @@ public class Selevento extends AppCompatActivity {
 
 
         Cursor filas = dbr.rawQuery("SELECT * FROM eventos",null);
+
         do {
-            Log.d("Spinner",filas.getString(2));
+            String codigo= filas.getString(0);
+            Log.d("SPINER",codigo);
 
         } while(filas.moveToNext());
 
