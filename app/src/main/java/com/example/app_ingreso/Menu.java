@@ -76,6 +76,11 @@ public class Menu extends AppCompatActivity {
                     if (Objects.equals(nombre, nombreb) && Objects.equals(contra,contrab)){
                         Log.d("D3","Paso");
                         Log.d("Local",localb);
+
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+                        db.execSQL("INSERT INTO locales (nr) VALUES ('"+idticket+"','"+dni+"','valido') ");
+
+                        LoadLocales("https://appingresos.000webhostapp.com/Busquedatablas.php",localb);
                         LoadEventos("https://appingresos.000webhostapp.com/Busquedatablas.php",localb);
 
                     }else {
@@ -102,9 +107,9 @@ public class Menu extends AppCompatActivity {
                 for (int i = 0; i < response.length(); i++) {
                     try {
                         jsonObject = response.getJSONObject(i);
-                        String nrolocalb=jsonObject.getString("nroLocal");
-                        String eventob=jsonObject.getString("nombreEvento");
-                        if (Objects.equals(nrolocalb, nrolocal)){
+                        String nrolocalb = jsonObject.getString("nroLocal");
+                        String eventob = jsonObject.getString("nombreEvento");
+                        if (Objects.equals(nrolocalb, nrolocal)) {
                             if (carga(eventob)) {
                                 LoadTablas("https://appingresos.000webhostapp.com/Cargartabla.php?tabla=" + eventob, eventob);
                             }
@@ -114,15 +119,13 @@ public class Menu extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
-                Intent intent= new Intent (Menu.this, MainActivity.class);
-                startActivity(intent);
             }
         }, error -> Toast.makeText(getApplicationContext(), "Error de 2", Toast.LENGTH_SHORT).show()
         );
         requestQueue= Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
-
     }
+
 
     public void LoadTablas(String URL,String event){
         JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
@@ -152,6 +155,33 @@ public class Menu extends AppCompatActivity {
         requestQueue= Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
 
+    }
+
+    public void LoadLocales(String URL){
+        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONObject jsonObject = null;
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        jsonObject = response.getJSONObject(i);
+                        String nrolocalb = jsonObject.getString("nroLocal");
+                        String eventob = jsonObject.getString("nombreEvento");
+                        if (Objects.equals(nrolocalb, nrolocal)) {
+                            if (carga(eventob)) {
+                                LoadTablas("https://appingresos.000webhostapp.com/Cargartabla.php?tabla=" + eventob, eventob);
+                            }
+                        }
+
+                    } catch (JSONException e) {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }, error -> Toast.makeText(getApplicationContext(), "Error de 2", Toast.LENGTH_SHORT).show()
+        );
+        requestQueue= Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
     }
 
 }
