@@ -1,6 +1,7 @@
 package com.example.app_ingreso;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,6 +43,8 @@ public class Menu extends AppCompatActivity {
             if (user != "" && pass != "") {
                 Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
             }
+            Intent act = new Intent(this, Selevento.class);
+            startActivity(act);
         });
 
     }
@@ -78,9 +81,7 @@ public class Menu extends AppCompatActivity {
                         Log.d("Local",localb);
 
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
-                        db.execSQL("INSERT INTO locales (nr) VALUES ('"+idticket+"','"+dni+"','valido') ");
-
-                        LoadLocales("https://appingresos.000webhostapp.com/Busquedatablas.php",localb);
+                        LoadLocales("https://appingresos.000webhostapp.com/loadeventos.php?cod="+localb);
                         LoadEventos("https://appingresos.000webhostapp.com/Busquedatablas.php",localb);
 
                     }else {
@@ -167,10 +168,16 @@ public class Menu extends AppCompatActivity {
                         jsonObject = response.getJSONObject(i);
                         String nrolocalb = jsonObject.getString("nroLocal");
                         String eventob = jsonObject.getString("nombreEvento");
-                        if (Objects.equals(nrolocalb, nrolocal)) {
-                            if (carga(eventob)) {
-                                LoadTablas("https://appingresos.000webhostapp.com/Cargartabla.php?tabla=" + eventob, eventob);
-                            }
+                        String nroeventob = jsonObject.getString("nroEvento");
+
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+                        SQLiteDatabase dbr = dbHelper.getReadableDatabase();
+                        Cursor filas = dbr.rawQuery("SELECT * FROM eventos WHERE nroEvento='"+nroeventob+"'",null);
+                        if (filas.moveToNext()) {
+                        }else {
+                            Log.d("D4",eventob);
+                            db.execSQL("INSERT INTO eventos (nroLocal, nombreEvento, nroEvento) " +
+                                    "VALUES ('" + nrolocalb + "','" + eventob + "','" + nroeventob + "') ");
                         }
 
                     } catch (JSONException e) {

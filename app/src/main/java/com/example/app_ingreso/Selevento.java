@@ -12,10 +12,13 @@ import android.widget.Spinner;
 
 import com.example.app_ingreso.bd.DbHelper;
 
+import java.util.ArrayList;
+
 public class Selevento extends AppCompatActivity {
 
     Spinner selector;
     Button btncont;
+    DbHelper dbHelper = new DbHelper(Selevento.this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,9 +26,16 @@ public class Selevento extends AppCompatActivity {
         selector = findViewById(R.id.selector);
         btncont=findViewById(R.id.btncont);
         DbHelper bdobj = new DbHelper(this);
-        SQLiteDatabase dbw = bdobj.getWritableDatabase();
         SQLiteDatabase dbr = bdobj.getReadableDatabase();
 
+        ArrayList<String> lista = new ArrayList<String>();
+
+
+        Cursor filas = dbr.rawQuery("SELECT * FROM eventos",null);
+        do {
+            Log.d("Spinner",filas.getString(2));
+
+        } while(filas.moveToNext());
 
     }
 }

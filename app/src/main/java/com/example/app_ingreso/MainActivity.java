@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
     RequestQueue requestQueue;
     ImageView imgOk, imgError, imgHome, imgList;
 
-    DbHelper dbHelper = new DbHelper(MainActivity.this);
-
     //Crea el main
     @SuppressLint({"MissingInflatedId", "WrongViewCast"})
     @Override
@@ -66,11 +64,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.window = getWindow();
-        DbHelper bdobj = new DbHelper(this);
-        //getReadableDatabase(); //solo para leer
-        SQLiteDatabase db = bdobj.getWritableDatabase();
-        //db.execSQL("");//(no trae datos pero ejecuta
-
 
         btnscan = findViewById(R.id.btn_scan);
         btn_acp = findViewById(R.id.btn_aceptar);
@@ -199,11 +192,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public boolean modifica (String dni){
-
+        DbHelper dbHelper = new DbHelper(MainActivity.this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
-            db.execSQL("UPDATE '28enero' SET estado='invalida' WHERE estado='invalida' AND DNI=dni");
             return true;
         }catch (Exception e){return false;}
     }
