@@ -73,7 +73,21 @@ public class MainActivity extends AppCompatActivity {
 
         btn_acp.setOnClickListener(v -> {
             try {
-                dni= text.getText().toString();
+                String res= text.getText().toString();
+                String[] parts = res.split("@"); //divide
+                int longitud = res.length();
+                if (longitud <= 10) { //ticket
+                    dni = res;
+                    text.setText(dni); //lo coloca en el editext
+                } else { //mas de 10
+                    String comprueba = parts[4]; //parte a comprobar
+                    if (Character.isDigit(Integer.parseInt(comprueba))) { //si es numero
+                        dni = parts[1]; //dni viejo
+                    } else { //si no es numero
+                        dni = parts[4]; //dni nuevo
+                    }
+                    text.setText(dni); //lo coloca en el editext
+                }
                 bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo="+dni);
                 if (modifica(dni)) { //si modifica
                     cambiaColorOK(primary); //ok
@@ -121,27 +135,29 @@ public class MainActivity extends AppCompatActivity {
 
     //Scaner
     protected void onActivityResult(int requestCode, int resultcode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultcode, data);
+        IntentResult result= IntentIntegrator.parseActivityResult(requestCode, resultcode, data);
         if (result != null) {
             if (result.getContents() == null) {
                 Toast.makeText(this, "Scaner cancelado", Toast.LENGTH_LONG).show();
             } else {
                 String res = String.valueOf(result); //recibe
+                Toast.makeText(this,"res:"+ res, Toast.LENGTH_SHORT).show();
                 String[] parts = res.split("@"); //divide
                 int longitud = res.length();
-                if (longitud <= 10) { //ticket
-                    dni = res;
-                    text.setText(dni); //lo coloca en el editext
-                } else { //mas de 10
+                Toast.makeText(this,"long:"+ longitud, Toast.LENGTH_SHORT).show();
+                dni = res;
 
-                    String comprueba = parts[4]; //parte a comprobar
-                    if (Character.isDigit(Integer.parseInt(comprueba))) { //si es numero
+                 if (longitud>10) { //mas de 10
+                    String comprueba = parts[3]; //parte a comprobar
+                    if (isNumeric(comprueba)) { //si es numero
                         dni = parts[1]; //dni viejo
+                        Toast.makeText(this, "dni:"+dni, Toast.LENGTH_SHORT).show();
                     } else { //si no es numero
                         dni = parts[4]; //dni nuevo
+                        Toast.makeText(this, "dni:"+dni, Toast.LENGTH_SHORT).show();
                     }
-                    text.setText(dni); //lo coloca en el editext
                 }
+                text.setText(dni); //lo coloca en el editext
                 bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo="+dni);
                 if (modifica(dni)) { //si modifica
                     cambiaColorOK(primary); //ok
@@ -158,7 +174,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public static boolean isNumeric(String comprueba) {
 
+        boolean resultado;
+
+        try {
+            Integer.parseInt(comprueba);
+            resultado = true;
+        } catch (NumberFormatException excepcion) {
+            resultado = false;
+        }
+
+        return resultado;
+    }
 
     private void cambiaColorOK (String primary){
         window.setStatusBarColor(Color.parseColor(primary));
