@@ -45,12 +45,13 @@ public class Selevento extends AppCompatActivity {
             } while(filas.moveToNext());
         }
         selector.setAdapter(new ArrayAdapter<String>(Selevento.this, android.R.layout.simple_spinner_dropdown_item, eventos));
-        String evet = (String) selector.getSelectedItem();
-        Log.d("Select",evet);
 
         btncont.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String evet = (String) selector.getSelectedItem();
+                Log.d("Select",evet);
+
                 Intent act = new Intent(Selevento.this, MainActivity.class);
                 act.putExtra("evento",evet);
                 startActivity(act);
