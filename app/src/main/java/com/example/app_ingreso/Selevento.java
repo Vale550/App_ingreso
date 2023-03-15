@@ -3,10 +3,13 @@ package com.example.app_ingreso;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
@@ -27,17 +30,31 @@ public class Selevento extends AppCompatActivity {
         btncont=findViewById(R.id.btncont);
         DbHelper bdobj = new DbHelper(this);
         SQLiteDatabase dbr = bdobj.getReadableDatabase();
-
-        ArrayList<String> lista = new ArrayList<String>();
-
+        Log.d("SPINER","emp");
 
         Cursor filas = dbr.rawQuery("SELECT * FROM eventos",null);
+        int cont = filas.getCount();
+        String[] eventos = new String[cont];
+        int i = 0;
+        if (filas.moveToFirst()) {
+            do {
+                String codigo= filas.getString(2);
+                Log.d("SPINER",codigo);
+                eventos[i] = codigo;
+                i++;
+            } while(filas.moveToNext());
+        }
+        selector.setAdapter(new ArrayAdapter<String>(Selevento.this, android.R.layout.simple_spinner_dropdown_item, eventos));
+        String evet = (String) selector.getSelectedItem();
+        Log.d("Select",evet);
 
-        do {
-            String codigo= filas.getString(0);
-            Log.d("SPINER",codigo);
-
-        } while(filas.moveToNext());
-
+        btncont.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent act = new Intent(Selevento.this, MainActivity.class);
+                act.putExtra("evento",evet);
+                startActivity(act);
+            }
+        });
     }
 }
