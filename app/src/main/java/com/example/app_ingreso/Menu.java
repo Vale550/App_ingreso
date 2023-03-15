@@ -1,8 +1,11 @@
 package com.example.app_ingreso;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +35,7 @@ public class Menu extends AppCompatActivity {
     EditText usuario,contrasena;
     RequestQueue requestQueue;
     DbHelper dbHelper = new DbHelper(Menu.this);
+    int conttablesN, conttablesL;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,13 +44,15 @@ public class Menu extends AppCompatActivity {
         usuario = findViewById(R.id.Usuario);
         contrasena = findViewById(R.id.Contrasena);
 
+
+
         btning.setOnClickListener(v -> {
+
             String user = usuario.getText().toString();
             String pass = contrasena.getText().toString();
             if (user != "" && pass != "") {
                 Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
             }
-
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
@@ -59,7 +65,34 @@ public class Menu extends AppCompatActivity {
 
         });
 
+
     }
+
+    public Boolean isOnlineNet() {
+
+        try {
+            Process p = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.es");
+
+            int val           = p.waitFor();
+            boolean reachable = (val == 0);
+            return reachable;
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return false;
+    }
+    private boolean isNetDisponible() {
+
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
+
+        return (actNetInfo != null && actNetInfo.isConnected());
+    }
+
     public boolean carga (String nom){
         //NOTA:no se puede cargar tablas en la local que vienen directamente
         //de la base de datos en la nube porque no reconoce las variables
