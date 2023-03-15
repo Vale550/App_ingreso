@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         this.window = getWindow();
-
         btnscan = findViewById(R.id.btn_scan);
         btn_acp = findViewById(R.id.btn_aceptar);
         text = findViewById(R.id.Texto);
@@ -122,7 +121,10 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean modifica(String dni) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String evento = "a28enero";
+
+        String eventoc = getIntent().getStringExtra("evento");
+        Log.d("EventoMain",eventoc);
+        String evento = eventoc;
         //--------------------------------------------------------------------------------------
         DbHelper bdobj = new DbHelper(this);
         SQLiteDatabase dbr = bdobj.getReadableDatabase();
