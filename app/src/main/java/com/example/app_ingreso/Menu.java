@@ -3,6 +3,7 @@ package com.example.app_ingreso;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -21,8 +22,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.Objects;
-
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Menu extends AppCompatActivity {
     Button btning;
@@ -43,6 +46,17 @@ public class Menu extends AppCompatActivity {
             if (user != "" && pass != "") {
                 Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
             }
+
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Log.d("Timer","pass");
+                    Intent act = new Intent(Menu.this, Selevento.class);
+                    startActivity(act);
+                }
+            }, 10000);
+
         });
 
     }
@@ -90,8 +104,6 @@ public class Menu extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
-            Intent act = new Intent(this, Selevento.class);
-            startActivity(act);
 
         }, error -> Toast.makeText(getApplicationContext(), "Error de Conexión", Toast.LENGTH_SHORT).show()
         );
