@@ -62,8 +62,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         this.window = getWindow();
+
+        String evento = getIntent().getStringExtra("evento");
+        Log.d("EventoMain",evento);
 
         btnscan = findViewById(R.id.btn_scan);
         btn_acp = findViewById(R.id.btn_aceptar);
@@ -78,10 +80,7 @@ public class MainActivity extends AppCompatActivity {
         btn_acp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    //bdnpost("https://appingresos.000webhostapp.com/post.php");
 
-                    buscarUsuarios("https://appingresos.000webhostapp.com/busquedawhile.php");
-                    //buscarUsuarios("https://appingresos.000webhostapp.com/busqueda.php?idticket="+text.getText().toString());
                 }
                 catch (Exception e){
 
