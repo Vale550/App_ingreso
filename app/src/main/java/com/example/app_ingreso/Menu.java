@@ -9,8 +9,11 @@ import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +38,8 @@ public class Menu extends AppCompatActivity {
     EditText usuario,contrasena;
     RequestQueue requestQueue;
     DbHelper dbHelper = new DbHelper(Menu.this);
+    ProgressBar progressBar;
+    TextView txtUsuario, txtPass;
     int conttablesN, conttablesL;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +85,7 @@ public class Menu extends AppCompatActivity {
                             //Mensaje de confirmacion (Entrar sin conexion)
                             Intent act = new Intent(Menu.this, Selevento.class);
                             startActivity(act);
+
                         }
                     } while(filas.moveToNext());
                 }
@@ -143,6 +149,11 @@ public class Menu extends AppCompatActivity {
                                 Log.d("Timer","pass");
                                 Intent act = new Intent(Menu.this, Selevento.class);
                                 startActivity(act);
+                                progressBar.setVisibility(View.VISIBLE);
+                                btning.setVisibility(View.INVISIBLE);
+                                usuario.setVisibility(View.INVISIBLE);
+                                txtUsuario.setVisibility(View.INVISIBLE);
+                                txtPass.setVisibility(View.INVISIBLE);
                             }
                         }, 10000);
                     }else {
