@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,22 +36,21 @@ import com.google.zxing.integration.android.IntentResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     private Window window;
-    String primary = "#0E7827";
-    String primary2 = "#DC3F11";
-    String primary3 = "#FF8000";
     ImageButton btnscan;
     String dni;
     ConstraintLayout navigationView;
     Button btn_acp;
-    EditText text;
+    EditText text, nameEvento;
+    TextView txtEntradasCompradas, txtEntradasUsadas;
     RequestQueue requestQueue;
-    ImageView imgOk, imgError, imgHome, imgList;
+    ImageView imgOk, imgError, imgHome, imgList, imgLogout, imgWifiNo, imgWifiSi;
     DbHelper dbHelper = new DbHelper(MainActivity.this);
 
     //Crea el main
@@ -68,9 +68,15 @@ public class MainActivity extends AppCompatActivity {
         imgError = findViewById(R.id.imgError);
         imgHome = findViewById(R.id.imgHome);
         imgList = findViewById(R.id.imgList);
+        imgLogout= findViewById(R.id.imgLogout);
+        imgWifiNo= findViewById(R.id.imgWifiNo);
+        imgWifiSi= findViewById(R.id.imgWifiSi);
         navigationView = findViewById(R.id.navigationView);
+        nameEvento= findViewById(R.id.nameEvento);
+        txtEntradasCompradas=findViewById(R.id.txtEntradasCompradas);
+        txtEntradasUsadas=findViewById(R.id.txtEntradasUsadas);
 
-
+        nameEvento.setText(getIntent().getStringExtra("evento"));
         btn_acp.setOnClickListener(v -> {
             try {
                 dni = text.getText().toString();
@@ -91,20 +97,31 @@ public class MainActivity extends AppCompatActivity {
                 }
                 bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo=" + dni);
                 if (modifica(dni)) { //si modifica
-                    cambiaColorOK(primary); //ok
+//                    cambiaColorOK(primary); //ok
                     imgOk.setVisibility(View.VISIBLE);
                     imgError.setVisibility(View.INVISIBLE);
                 } else { //si no modifica
-                    cambiaColorOK(primary2); //error
+//                    cambiaColorOK(primary2); //error
                     imgError.setVisibility(View.VISIBLE);
                     imgOk.setVisibility(View.INVISIBLE);
                 }
                 text.setText("");
             } catch (Exception ignored) {
-                cambiaColorOK(primary2);
+//                cambiaColorOK(primary2);
             }
         });
-
+        imgHome.setOnClickListener(view -> {
+            Intent act1 = new Intent(MainActivity.this, Selevento.class);
+            startActivity(act1);
+        });
+        imgList.setOnClickListener(view -> {
+            Intent act2 = new Intent(MainActivity.this, List1.class);
+            startActivity(act2);
+        });
+        imgLogout.setOnClickListener(view -> {
+            Intent act3 = new Intent(MainActivity.this, Menu.class);
+            startActivity(act3);
+        });
 
         //Scaner
         btnscan.setOnClickListener(view -> {
@@ -117,14 +134,54 @@ public class MainActivity extends AppCompatActivity {
             integrator.initiateScan();
 
         });
+        nroUsadasCompradas();
+
+        try {
+            if (conectadoAInternet()){
+                imgWifiSi.setVisibility(View.VISIBLE);
+                imgWifiNo.setVisibility(View.INVISIBLE);
+            }else {
+                imgWifiNo.setVisibility(View.VISIBLE);
+                imgWifiSi.setVisibility(View.INVISIBLE);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean conectadoAInternet() throws IOException, InterruptedException {
+        String comando = "ping -c 1 google.com";
+        return (Runtime.getRuntime().exec (comando).waitFor() == 0);
+    }
+    public void nroUsadasCompradas() {
+        String eventoc = getIntent().getStringExtra("evento");
+        String evento = "a" + eventoc;
+        DbHelper bdobj = new DbHelper(this);
+        SQLiteDatabase dbr = bdobj.getReadableDatabase();
+        Cursor filas = dbr.rawQuery("SELECT COUNT('idticket') FROM " + evento + " WHERE estado='invalida'", null);
+        if (filas.moveToFirst()) {
+            do {
+                String codigo = filas.getString(0);
+                txtEntradasUsadas.setText(codigo);
+            } while (filas.moveToNext());
+        }
+        Cursor filas1 = dbr.rawQuery("SELECT COUNT('idticket') FROM " + evento + "", null);
+        if (filas1.moveToFirst()) {
+            do {
+                String codigo1 = filas1.getString(0);
+                txtEntradasCompradas.setText(codigo1);
+            } while (filas1.moveToNext());
+        }
     }
 
     public boolean modifica(String dni) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         String eventoc = getIntent().getStringExtra("evento");
-        Log.d("EventoMain",eventoc);
-        String evento = eventoc;
+        String evento = "a"+eventoc;
+
         //--------------------------------------------------------------------------------------
         DbHelper bdobj = new DbHelper(this);
         SQLiteDatabase dbr = bdobj.getReadableDatabase();
@@ -166,11 +223,11 @@ public class MainActivity extends AppCompatActivity {
                 text.setText(dni); //lo coloca en el editext
                 bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo=" + dni);
                 if (modifica(dni)) { //si modifica
-                        cambiaColorOK(primary); //ok
+//                        cambiaColorOK(primary); //ok
                         imgOk.setVisibility(View.VISIBLE);
                         imgError.setVisibility(View.INVISIBLE);
                 } else { //si no modifica
-                        cambiaColorOK(primary2); //error
+//                        cambiaColorOK(primary2); //error
                         imgError.setVisibility(View.VISIBLE);
                         imgOk.setVisibility(View.INVISIBLE);
                     }
@@ -194,13 +251,13 @@ public class MainActivity extends AppCompatActivity {
             return resultado;
         }
 
-        private void cambiaColorOK (String primary){
-            window.setStatusBarColor(Color.parseColor(primary));
-            window.setNavigationBarColor(Color.parseColor(primary));
-            Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(Color.parseColor(primary)));
-            btnscan.setBackgroundColor(Color.parseColor(primary));
-            btn_acp.setBackgroundColor(Color.parseColor(primary));
-        }
+//        private void cambiaColorOK (String primary){
+//            window.setStatusBarColor(Color.parseColor(primary));
+//            window.setNavigationBarColor(Color.parseColor(primary));
+//            Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(Color.parseColor(primary)));
+//            btnscan.setBackgroundColor(Color.parseColor(primary));
+//            btn_acp.setBackgroundColor(Color.parseColor(primary));
+//        }
 
 
         //Insertar/actualizar BDN
@@ -209,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> Toast.makeText(getApplicationContext(), "Operacion exitosa", Toast.LENGTH_SHORT).show(), error -> {
                     Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
-                    cambiaColorOK(primary2);
+//                    cambiaColorOK(primary2);
                     imgError.setVisibility(View.VISIBLE);
                     imgOk.setVisibility(View.INVISIBLE);
 
@@ -227,19 +284,7 @@ public class MainActivity extends AppCompatActivity {
                 };
                 requestQueue = Volley.newRequestQueue(this);
                 requestQueue.add(stringRequest);
-                new CountDownTimer(1500, 1500) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
 
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        cambiaColorOK(primary3);
-                        //imgOk.setVisibility(View.INVISIBLE);
-                    }
-
-                }.start();
             } catch (Exception e) {
                 Log.d("D1", "Error");
             }

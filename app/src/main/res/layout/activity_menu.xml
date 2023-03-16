@@ -10,54 +10,75 @@
 
     <TextView
         android:id="@+id/txtUsuario"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="128dp"
+        android:layout_width="74dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="150dp"
         android:text="Usuario:"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/Usuario"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.225"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/Usuario"
-        android:layout_width="231dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="164dp"
+        android:layout_width="249dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="131dp"
         android:text=""
+        app:layout_constraintBottom_toTopOf="@+id/txtPass"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.469"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtUsuario"
         tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/txtPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="260dp"
         android:text="Contraseña:"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:layout_editor_absoluteY="298dp" />
 
     <EditText
         android:id="@+id/Contrasena"
-        android:layout_width="231dp"
-        android:layout_height="37dp"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="296dp"
+        android:layout_width="249dp"
+        android:layout_height="69dp"
         android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.455"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtPass"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btnIngreso"
-        android:layout_width="138dp"
-        android:layout_height="53dp"
-        android:layout_marginStart="136dp"
-        android:layout_marginTop="380dp"
+        android:layout_width="211dp"
+        android:layout_height="64dp"
         android:text="Ingresar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/indeterminate_circular_indicator"
+        app:layout_constraintVertical_bias="0.483"
+        tools:ignore="MissingConstraints" />
+
+    <ProgressBar
+        android:id="@+id/indeterminate_circular_indicator"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="171dp"
+        android:layout_height="129dp"
+        android:indeterminateTint="#F44336"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintVertical_bias="0.34" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

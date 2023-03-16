@@ -9,8 +9,11 @@ import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,8 +37,10 @@ public class Menu extends AppCompatActivity {
     Button btning;
     EditText usuario,contrasena;
     RequestQueue requestQueue;
+    TextView txtUsuario, txtPass;
     DbHelper dbHelper = new DbHelper(Menu.this);
     int conttablesN, conttablesL;
+    ProgressBar progressBar;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +48,10 @@ public class Menu extends AppCompatActivity {
         btning = findViewById(R.id.btnIngreso);
         usuario = findViewById(R.id.Usuario);
         contrasena = findViewById(R.id.Contrasena);
+        txtUsuario=findViewById(R.id.txtUsuario);
+        txtPass=findViewById(R.id.txtPass);
+        progressBar= findViewById(R.id.indeterminate_circular_indicator);
+
 
 
 
@@ -62,8 +71,14 @@ public class Menu extends AppCompatActivity {
                     startActivity(act);
                 }
             }, 10000);
-
+            progressBar.setVisibility(View.VISIBLE);
+            btning.setVisibility(View.INVISIBLE);
+            usuario.setVisibility(View.INVISIBLE);
+            contrasena.setVisibility(View.INVISIBLE);
+            txtUsuario.setVisibility(View.INVISIBLE);
+            txtPass.setVisibility(View.INVISIBLE);
         });
+
 
 
     }

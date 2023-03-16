@@ -29,24 +29,24 @@
         android:id="@+id/btn_aceptar"
         android:layout_width="184dp"
         android:layout_height="66dp"
-        android:layout_marginStart="153dp"
-        android:layout_marginTop="184dp"
-        android:layout_marginEnd="74dp"
+        android:layout_marginTop="40dp"
         android:text="@string/aceptar1"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toEndOf="@+id/navigationView"
+        app:layout_constraintTop_toBottomOf="@+id/Texto"
         tools:ignore="DuplicateSpeakableTextCheck,MissingConstraints,TextContrastCheck" />
 
     <TextView
         android:id="@+id/txtIngreso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="16dp"
         android:text="@string/ingrese_dni_o_idticket"
         android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.019"
         app:layout_constraintStart_toEndOf="@+id/navigationView"
         app:layout_constraintTop_toBottomOf="@+id/nameEvento"
         tools:ignore="MissingConstraints" />
@@ -55,13 +55,14 @@
         android:id="@+id/txtEntradasCompradas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="308dp"
-        android:text="@string/textview2"
+        android:textSize="60sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/navigationView"
         app:layout_constraintTop_toBottomOf="@+id/imgEntradasCompradas"
+        app:layout_constraintVertical_bias="0.305"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -69,12 +70,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
-        android:layout_marginEnd="52dp"
+        android:layout_marginEnd="88dp"
         android:layout_marginBottom="308dp"
-        android:text="@string/textview1"
+        android:textSize="60sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgEntradasCompradas"
+        app:layout_constraintVertical_bias="0.225"
         tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -110,7 +112,7 @@
             app:srcCompat="@drawable/list" />
 
         <ImageView
-            android:id="@+id/imageView11"
+            android:id="@+id/imgLogout"
             android:layout_width="45dp"
             android:layout_height="44dp"
             android:layout_marginTop="59dp"
@@ -120,16 +122,28 @@
             tools:ignore="MissingConstraints" />
 
         <ImageView
-            android:id="@+id/imageView12"
+            android:id="@+id/imgWifiSi"
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="2dp"
             android:layout_marginBottom="16dp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/wifisi" />
+
+        <ImageView
+            android:id="@+id/imgWifiNo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@drawable/wifino"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="0dp"
+            tools:visibility="invisible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -159,7 +173,7 @@
         android:id="@+id/btn_scan"
         android:layout_width="77dp"
         android:layout_height="67dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="104dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/presence_video_away"
@@ -196,9 +210,7 @@
         style="@style/Widget.Material3.TextInputEditText.OutlinedBox.Dense"
         android:layout_width="209dp"
         android:layout_height="62dp"
-        android:layout_marginStart="114dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="88dp"
         android:autoText="false"
         android:clickable="false"
         android:contextClickable="false"
@@ -212,8 +224,7 @@
         android:textColorHint="#913939"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/navigationView"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
