@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
         String eventoc = getIntent().getStringExtra("evento");
         Log.d("EventoMain",eventoc);
-        String evento = eventoc;
+        String evento = "a"+eventoc;
         //--------------------------------------------------------------------------------------
         DbHelper bdobj = new DbHelper(this);
         SQLiteDatabase dbr = bdobj.getReadableDatabase();

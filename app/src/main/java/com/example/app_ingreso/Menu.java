@@ -44,45 +44,52 @@ public class Menu extends AppCompatActivity {
         usuario = findViewById(R.id.Usuario);
         contrasena = findViewById(R.id.Contrasena);
 
-
-
         btning.setOnClickListener(v -> {
 
             String user = usuario.getText().toString();
             String pass = contrasena.getText().toString();
-            if (user != "" && pass != "") {
-                Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
-            }
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Log.d("Timer","pass");
-                    Intent act = new Intent(Menu.this, Selevento.class);
-                    startActivity(act);
+
+            if (isNetDisponible()) {
+
+                if (user != "" && pass != "") {
+                    Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
                 }
-            }, 10000);
+                else {
+                    //Mensaje debe ingresar datos
+                }
+
+                //Codigo para comparar cantidad de tablas
+//                    conttablas("https://appingresos.000webhostapp.com/conttablas.php");
+//                    DbHelper bdobj = new DbHelper(this);
+//                    SQLiteDatabase dbr = bdobj.getReadableDatabase();
+//                    Cursor filas = dbr.rawQuery("SELECT * FROM eventos",null);
+//                    conttablesL= filas.getCount();
+//                    Log.d("Local", String.valueOf(conttablesL));
+//                    Log.d("Nube", String.valueOf(conttablesN));
+
+            }else {
+                DbHelper bdobj = new DbHelper(this);
+                SQLiteDatabase dbr = bdobj.getReadableDatabase();
+                Cursor filas = dbr.rawQuery("SELECT * FROM admin",null);
+                if (filas.moveToFirst()) {
+                    do {
+                        String nombre= filas.getString(1);
+                        String contrasena= filas.getString(2);
+                        Log.d("Usuarios",nombre);
+                        if (nombre==user && pass==contrasena){
+                            //Mensaje de confirmacion (Entrar sin conexion)
+                            Intent act = new Intent(Menu.this, Selevento.class);
+                            startActivity(act);
+                        }
+                    } while(filas.moveToNext());
+                }
+            }
 
         });
 
 
     }
 
-    public Boolean isOnlineNet() {
-
-        try {
-            Process p = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.es");
-
-            int val           = p.waitFor();
-            boolean reachable = (val == 0);
-            return reachable;
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return false;
-    }
     private boolean isNetDisponible() {
 
         ConnectivityManager connectivityManager = (ConnectivityManager)
@@ -115,7 +122,6 @@ public class Menu extends AppCompatActivity {
             for (int i = 0; i < response.length(); i++) {
                 try {
                     jsonObject = response.getJSONObject(i);
-                    jsonObject.getString("username");
 
                     String nombreb=jsonObject.getString("username");
                     String contrab=jsonObject.getString("password");
@@ -126,9 +132,19 @@ public class Menu extends AppCompatActivity {
                         Log.d("Local",localb);
 
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
+                        LoadUsuarios("https://appingresos.000webhostapp.com/cargarusuario.php");
                         LoadLocales("https://appingresos.000webhostapp.com/loadeventos.php?cod="+localb);
                         LoadEventos("https://appingresos.000webhostapp.com/Busquedatablas.php",localb);
 
+                        Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                Log.d("Timer","pass");
+                                Intent act = new Intent(Menu.this, Selevento.class);
+                                startActivity(act);
+                            }
+                        }, 10000);
                     }else {
                         Log.d("D3","error");
                     }
@@ -183,9 +199,9 @@ public class Menu extends AppCompatActivity {
                         jsonObject = response.getJSONObject(i);
                         String idticket=jsonObject.getString("idticket");
                         String dni=jsonObject.getString("DNI");
-
+                        String estado=jsonObject.getString("estado");
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
-                        db.execSQL("INSERT INTO a"+event+" (idticket,DNI,estado) VALUES ('"+idticket+"','"+dni+"','valido') ");
+                        db.execSQL("INSERT INTO a"+event+" (idticket,DNI,estado) VALUES ('"+idticket+"','"+dni+"','"+estado+"') ");
                         Log.d("DFINAL",idticket);
 
                     } catch (JSONException e) {
@@ -234,6 +250,67 @@ public class Menu extends AppCompatActivity {
         );
         requestQueue= Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
+    }
+
+    public void conttablas(String URL){
+        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONObject jsonObject = null;
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        jsonObject = response.getJSONObject(i);
+                        String cant=jsonObject.getString("");
+                        conttablesN=Integer.valueOf(cant);
+
+                    } catch (JSONException e) {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+        }, error -> Toast.makeText(getApplicationContext(), "Error de conttablas", Toast.LENGTH_SHORT).show()
+        );
+        requestQueue= Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public void LoadUsuarios(String URL){
+        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONObject jsonObject = null;
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        jsonObject = response.getJSONObject(i);
+                        String nroAdmin=jsonObject.getString("nroAdmin");
+                        String username=jsonObject.getString("username");
+                        String password=jsonObject.getString("password");
+                        String nroLocal=jsonObject.getString("nroLocal");
+                        Log.d("CargaUSER-1", username);
+                        Log.d("Length", String.valueOf(response.length()));
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+                        Cursor filass = db.rawQuery("SELECT * FROM admin",null);
+
+                        while (filass.moveToNext()) {}
+                        {
+                            db.execSQL("INSERT INTO admin (nroAdmin,username,password,nroLocal) VALUES ('" + nroAdmin + "','" + username + "','" + password + "','" + nroLocal + "') ");
+                            Log.d("CargaUSER-2", username);
+                        }
+
+                    } catch (JSONException e) {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+        }, error -> {
+
+        }
+        );
+        requestQueue= Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+
     }
 
 }
