@@ -53,6 +53,11 @@ public class Menu extends AppCompatActivity {
 
             String user = usuario.getText().toString();
             String pass = contrasena.getText().toString();
+            progressBar.setVisibility(View.VISIBLE);
+            btning.setVisibility(View.INVISIBLE);
+            usuario.setVisibility(View.INVISIBLE);
+            txtUsuario.setVisibility(View.INVISIBLE);
+            txtPass.setVisibility(View.INVISIBLE);
 
             if (isNetDisponible()) {
 
@@ -150,11 +155,7 @@ public class Menu extends AppCompatActivity {
                                 Log.d("Timer","pass");
                                 Intent act = new Intent(Menu.this, Selevento.class);
                                 startActivity(act);
-                                progressBar.setVisibility(View.VISIBLE);
-                                btning.setVisibility(View.INVISIBLE);
-                                usuario.setVisibility(View.INVISIBLE);
-                                txtUsuario.setVisibility(View.INVISIBLE);
-                                txtPass.setVisibility(View.INVISIBLE);
+
                             }
                         }, 10000);
                     }else {
