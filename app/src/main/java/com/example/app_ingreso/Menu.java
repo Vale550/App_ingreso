@@ -54,6 +54,7 @@ public class Menu extends AppCompatActivity {
                 if (user != "" && pass != "") {
                     Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
                 }
+
                 else {
                     //Mensaje debe ingresar datos
                 }
