@@ -32,6 +32,7 @@ public class Selevento extends AppCompatActivity {
         SQLiteDatabase dbr = bdobj.getReadableDatabase();
         Log.d("SPINER","emp");
 
+
         Cursor filas = dbr.rawQuery("SELECT * FROM eventos",null);
         int cont = filas.getCount();
         String[] eventos = new String[cont];
