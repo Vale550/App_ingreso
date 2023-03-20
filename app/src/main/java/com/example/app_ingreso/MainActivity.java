@@ -8,8 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -42,7 +42,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-    private Window window;
     ImageButton btnscan;
     String dni;
     ConstraintLayout navigationView;
@@ -62,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.window = getWindow();
         btnscan = findViewById(R.id.btn_scan);
         btn_acp = findViewById(R.id.btn_aceptar);
         text = findViewById(R.id.Texto);
@@ -106,7 +104,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };timerr.schedule(task,10,TiempoTimer*1000);
+        //////////////////////////
+        text.setOnEditorActionListener((text, actionId, keyEvent) -> {
+            if(keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
+                btn_acp.callOnClick();
 
+                return true;
+
+            }
+            return false;
+        });
+        ////////////////////
         nameEvento.setText(getIntent().getStringExtra("evento"));
         btn_acp.setOnClickListener(v -> {
             try {
@@ -167,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         });
         nroUsadasCompradas();
 
+
         try {
             if (conectadoAInternet()){
                 imgWifiSi.setVisibility(View.VISIBLE);
@@ -176,9 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 imgWifiSi.setVisibility(View.INVISIBLE);
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -216,14 +223,14 @@ public class MainActivity extends AppCompatActivity {
         //--------------------------------------------------------------------------------------
         DbHelper bdobj = new DbHelper(this);
         SQLiteDatabase dbr = bdobj.getReadableDatabase();
-
-        Cursor filas = dbr.rawQuery("SELECT * FROM " + evento + " WHERE estado='valido' AND (DNI= " + dni + "" +
-                " OR idticket= " + dni + ")", null);
-        if (filas.moveToNext()) {
-            db.execSQL("UPDATE " + evento + " SET estado='invalida' WHERE DNI= " + dni + " OR idticket= " + dni + "");
+        Cursor filas = dbr.rawQuery("SELECT * FROM "+evento+" WHERE estado='valido' AND (DNI= "+dni+"" +
+                " OR idticket= "+dni+")" ,null);
+        if (filas.moveToNext()){
+            db.execSQL("UPDATE "+evento+" SET estado='invalida' WHERE DNI= "+dni+" OR idticket= "+dni+"");
             return true;
         }
         return false;
+
     }
 
     //Scaner
@@ -244,21 +251,19 @@ public class MainActivity extends AppCompatActivity {
 
                     if (isNumeric(comprueba)) { //si es numero
                         dni = parts[1]; //dni viejo
-                        Toast.makeText(this, "dni:" + dni, Toast.LENGTH_SHORT).show();
+
                     } else { //si no es numero
                         dni = parts[4]; //dni nuevo
-                        Toast.makeText(this, "dni:" + dni, Toast.LENGTH_SHORT).show();
+
                     }
                 }
 
                 text.setText(dni); //lo coloca en el editext
                 bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo=" + dni);
                 if (modifica(dni)) { //si modifica
-//                        cambiaColorOK(primary); //ok
                         imgOk.setVisibility(View.VISIBLE);
                         imgError.setVisibility(View.INVISIBLE);
                 } else { //si no modifica
-//                        cambiaColorOK(primary2); //error
                         imgError.setVisibility(View.VISIBLE);
                         imgOk.setVisibility(View.INVISIBLE);
                     }
@@ -287,11 +292,10 @@ public class MainActivity extends AppCompatActivity {
         private void bdnpost (String URL){
             try {
 
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> Toast.makeText(getApplicationContext(), "Operacion exitosa", Toast.LENGTH_SHORT).show(), error -> {
-                    Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
-//                    cambiaColorOK(primary2);
-                    imgError.setVisibility(View.VISIBLE);
-                    imgOk.setVisibility(View.INVISIBLE);
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> Toast.makeText(getApplicationContext(), "Operacion exitosa", Toast.LENGTH_SHORT), error -> {
+//
+//                    imgError.setVisibility(View.VISIBLE);
+//                    imgOk.setVisibility(View.INVISIBLE);
 
                 }) {
                     @NonNull
