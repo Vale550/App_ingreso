@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 dni = text.getText().toString();
                 String res = text.getText().toString();
-                String[] parts = res.split("@"); //divide
+                String[] parts = res.split("&"); //divide
                 int longitud = res.length();
                 if (longitud <= 10) { //ticket
                     dni = res;
@@ -135,17 +135,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo=" + dni);
                 if (modifica(dni)) { //si modifica
-//                    cambiaColorOK(primary); //ok
+//
                     imgOk.setVisibility(View.VISIBLE);
                     imgError.setVisibility(View.INVISIBLE);
                 } else { //si no modifica
-//                    cambiaColorOK(primary2); //error
+//
                     imgError.setVisibility(View.VISIBLE);
                     imgOk.setVisibility(View.INVISIBLE);
                 }
                 text.setText("");
             } catch (Exception ignored) {
-//                cambiaColorOK(primary2);
+//
             }
         });
         imgHome.setOnClickListener(view -> {
@@ -288,14 +288,6 @@ public class MainActivity extends AppCompatActivity {
 
             return resultado;
         }
-
-//        private void cambiaColorOK (String primary){
-//            window.setStatusBarColor(Color.parseColor(primary));
-//            window.setNavigationBarColor(Color.parseColor(primary));
-//            Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(Color.parseColor(primary)));
-//            btnscan.setBackgroundColor(Color.parseColor(primary));
-//            btn_acp.setBackgroundColor(Color.parseColor(primary));
-//        }
 
 
         //Insertar/actualizar BDN
