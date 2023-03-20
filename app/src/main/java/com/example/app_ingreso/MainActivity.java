@@ -26,6 +26,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -33,6 +34,7 @@ import com.example.app_ingreso.bd.DbHelper;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +42,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private Window window;
@@ -52,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     RequestQueue requestQueue;
     ImageView imgOk, imgError, imgHome, imgList, imgLogout, imgWifiNo, imgWifiSi;
     DbHelper dbHelper = new DbHelper(MainActivity.this);
+
+    String [] estadoN, idticketN, estadoL, idticketL;
 
     //Crea el main
     @SuppressLint({"MissingInflatedId", "WrongViewCast"})
@@ -75,6 +81,38 @@ public class MainActivity extends AppCompatActivity {
         nameEvento= findViewById(R.id.nameEvento);
         txtEntradasCompradas=findViewById(R.id.txtEntradasCompradas);
         txtEntradasUsadas=findViewById(R.id.txtEntradasUsadas);
+
+        String eventoc = getIntent().getStringExtra("evento");
+        String evento = "a" + eventoc;
+        int TiempoTimer = 20;//Segundos
+        Timer timerr = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+
+                DbHelper bdobj = new DbHelper(MainActivity.this);
+                SQLiteDatabase dbr = bdobj.getReadableDatabase();
+                Cursor filas = dbr.rawQuery("SELECT * FROM "+evento+"",null);
+                idticketL = new String[filas.getCount()];
+                estadoL = new String[filas.getCount()];
+                int i = 0;
+                if (filas.moveToNext()){
+                    do {
+                        Log.d("Carga bd local",filas.getString(1));
+                        Log.d("Carga bd local",filas.getString(3));
+
+                        String idticket=filas.getString(1);
+                        String estado=filas.getString(1);
+
+                        idticketL[i]= idticket;
+                        estadoL[i]= estado;
+                        i++;
+                    }while (filas.moveToNext());
+                }
+                sincronizacion1("https://appingresos.000webhostapp.com/Cargartabla.php?tabla="+evento,eventoc);
+
+            }
+        };timerr.schedule(task,10,TiempoTimer*1000);
 
         nameEvento.setText(getIntent().getStringExtra("evento"));
         btn_acp.setOnClickListener(v -> {
@@ -315,4 +353,78 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        public void sincronizacion1(String URL, String event){
+        try {
+            if (conectadoAInternet()) {
+                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        estadoN = new String[response.length()];
+                        idticketN = new String[response.length()];
+                        JSONObject jsonObject = null;
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+
+                                jsonObject = response.getJSONObject(i);
+                                estadoN [i] = jsonObject.getString("estado");
+                                idticketN [i] = jsonObject.getString("idticket");
+
+                                if (estadoL[i] == "inValida"){
+                                    sincronizacion2("https://appingresos.000webhostapp.com/Update.php",i);
+                                }
+
+
+                            } catch (JSONException e) {
+                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                    }
+                }, error -> Toast.makeText(getApplicationContext(), "Error de conttablas", Toast.LENGTH_SHORT).show()
+                );
+                requestQueue = Volley.newRequestQueue(this);
+                requestQueue.add(jsonArrayRequest);
+            }
+            else {
+                //Mensaje "Se requiere internet"
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
+    public void sincronizacion2(String URL,int ii){
+        String eventoc = getIntent().getStringExtra("evento");
+        String evento = "a" + eventoc;
+        try {
+            if (conectadoAInternet()) {
+                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        JSONObject jsonObject = null;
+                        for (int i = 0; i < response.length(); i++) {
+
+                            Map<String, String> parametros = new HashMap<>();
+                            parametros.put("tabla", eventoc);
+                            parametros.put("idticket", idticketL[ii]);
+
+                        }
+
+                    }
+                }, error -> Toast.makeText(getApplicationContext(), "Error de conttablas", Toast.LENGTH_SHORT).show()
+                );
+                requestQueue = Volley.newRequestQueue(this);
+                requestQueue.add(jsonArrayRequest);
+            }
+            else {
+                //Mensaje "Se requiere internet"
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+}

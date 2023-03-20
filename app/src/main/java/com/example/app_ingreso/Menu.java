@@ -25,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Timer;
@@ -49,41 +50,37 @@ public class Menu extends AppCompatActivity {
             String user = usuario.getText().toString();
             String pass = contrasena.getText().toString();
 
-            if (isNetDisponible()) {
-
-                if (user != "" && pass != "") {
-                    Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
+            try {
+                if (conectadoAInternet()) {
+                    if (user != "" && pass != "") {
+                        Loaduser("https://appingresos.000webhostapp.com/busquedawhile.php", user, pass);
+                        Log.d("Conexion","con conex");
+                        //FALTA TIMER PARA ENTRAR CON CONEX
+                    }
+                    //Codigo para comparar cantidad de tablas
+    //                    conttablas("https://appingresos.000webhostapp.com/conttablas.php");
+    //                    DbHelper bdobj = new DbHelper(this);
+    //                    SQLiteDatabase dbr = bdobj.getReadableDatabase();
+    //                    Cursor filas = dbr.rawQuery("SELECT * FROM eventos",null);
+    //                    conttablesL= filas.getCount();
+    //                    Log.d("Local", String.valueOf(conttablesL));
+    //                    Log.d("Nube", String.valueOf(conttablesN));
                 }
-
                 else {
-                    //Mensaje debe ingresar datos
+                    DbHelper bdobj = new DbHelper(this);
+                    SQLiteDatabase dbr = bdobj.getReadableDatabase();
+                    Cursor filas = dbr.rawQuery("SELECT * FROM admin WHERE username='"+user+"' and password='"+pass+"'",null);
+                    if (filas.moveToFirst()) {
+                        //Mensaje de confirmacion (Entrar sin conexion)
+                        Intent act = new Intent(Menu.this, Selevento.class);
+                        startActivity(act);
+                        Log.d("Conexion","sin conex");
+                    }
                 }
-
-                //Codigo para comparar cantidad de tablas
-//                    conttablas("https://appingresos.000webhostapp.com/conttablas.php");
-//                    DbHelper bdobj = new DbHelper(this);
-//                    SQLiteDatabase dbr = bdobj.getReadableDatabase();
-//                    Cursor filas = dbr.rawQuery("SELECT * FROM eventos",null);
-//                    conttablesL= filas.getCount();
-//                    Log.d("Local", String.valueOf(conttablesL));
-//                    Log.d("Nube", String.valueOf(conttablesN));
-
-            }else {
-                DbHelper bdobj = new DbHelper(this);
-                SQLiteDatabase dbr = bdobj.getReadableDatabase();
-                Cursor filas = dbr.rawQuery("SELECT * FROM admin",null);
-                if (filas.moveToFirst()) {
-                    do {
-                        String nombre= filas.getString(1);
-                        String contrasena= filas.getString(2);
-                        Log.d("Usuarios",nombre);
-                        if (nombre==user && pass==contrasena){
-                            //Mensaje de confirmacion (Entrar sin conexion)
-                            Intent act = new Intent(Menu.this, Selevento.class);
-                            startActivity(act);
-                        }
-                    } while(filas.moveToNext());
-                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
 
         });
@@ -91,14 +88,9 @@ public class Menu extends AppCompatActivity {
 
     }
 
-    private boolean isNetDisponible() {
-
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
-
-        return (actNetInfo != null && actNetInfo.isConnected());
+    public boolean conectadoAInternet() throws IOException, InterruptedException {
+        String comando = "ping -c 1 google.com";
+        return (Runtime.getRuntime().exec (comando).waitFor() == 0);
     }
 
     public boolean carga (String nom){
@@ -137,15 +129,6 @@ public class Menu extends AppCompatActivity {
                         LoadLocales("https://appingresos.000webhostapp.com/loadeventos.php?cod="+localb);
                         LoadEventos("https://appingresos.000webhostapp.com/Busquedatablas.php",localb);
 
-                        Timer timer = new Timer();
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                Log.d("Timer","pass");
-                                Intent act = new Intent(Menu.this, Selevento.class);
-                                startActivity(act);
-                            }
-                        }, 10000);
                     }else {
                         Log.d("D3","error");
                     }
@@ -198,11 +181,14 @@ public class Menu extends AppCompatActivity {
                 for (int i = 0; i < response.length(); i++) {
                     try {
                         jsonObject = response.getJSONObject(i);
+
+                        String id=jsonObject.getString("id");
                         String idticket=jsonObject.getString("idticket");
                         String dni=jsonObject.getString("DNI");
                         String estado=jsonObject.getString("estado");
+
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
-                        db.execSQL("INSERT INTO a"+event+" (idticket,DNI,estado) VALUES ('"+idticket+"','"+dni+"','"+estado+"') ");
+                        db.execSQL("INSERT INTO a"+event+" (id,idticket,DNI,estado) VALUES ('"+id+"','"+idticket+"','"+dni+"','"+estado+"') ");
                         Log.d("DFINAL",idticket);
 
                     } catch (JSONException e) {
