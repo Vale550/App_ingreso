@@ -81,18 +81,7 @@ public class Menu extends AppCompatActivity {
 
                         }.start();
 
-//
-//
-
                     }
-                    //Codigo para comparar cantidad de tablas
-    //                    conttablas("https://appingresos.000webhostapp.com/conttablas.php");
-    //                    DbHelper bdobj = new DbHelper(this);
-    //                    SQLiteDatabase dbr = bdobj.getReadableDatabase();
-    //                    Cursor filas = dbr.rawQuery("SELECT * FROM eventos",null);
-    //                    conttablesL= filas.getCount();
-    //                    Log.d("Local", String.valueOf(conttablesL));
-    //                    Log.d("Nube", String.valueOf(conttablesN));
                 }
                 else {
                     DbHelper bdobj = new DbHelper(this);
@@ -118,7 +107,8 @@ public class Menu extends AppCompatActivity {
 
     public boolean conectadoAInternet() throws IOException, InterruptedException {
         String comando = "ping -c 1 google.com";
-        return (Runtime.getRuntime().exec (comando).waitFor() == 0);
+        //return (Runtime.getRuntime().exec (comando).waitFor() == 0);
+        return true;
     }
 
     public boolean carga (String nom){
@@ -267,28 +257,6 @@ public class Menu extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-//    public void conttablas(String URL){
-//        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                JSONObject jsonObject = null;
-//                for (int i = 0; i < response.length(); i++) {
-//                    try {
-//                        jsonObject = response.getJSONObject(i);
-//                        String cant=jsonObject.getString("");
-//                        conttablesN=Integer.valueOf(cant);
-//
-//                    } catch (JSONException e) {
-//                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//
-//            }
-//        }, error -> Toast.makeText(getApplicationContext(), "Error de conttablas", Toast.LENGTH_SHORT).show()
-//        );
-//        requestQueue= Volley.newRequestQueue(this);
-//        requestQueue.add(jsonArrayRequest);
-//    }
 
     public void LoadUsuarios(String URL){
         JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
