@@ -102,7 +102,9 @@ public class MainActivity extends AppCompatActivity {
                         i++;
                     }while (filas.moveToNext());
                 }
-                sincronizacion1("https://appingresos.000webhostapp.com/Cargartabla.php?tabla="+evento,eventoc,idticketL);
+                Log.d("Update Nube","Subir");
+                    sincronizacion1("https://appingresos.000webhostapp.com/Update.php",eventoc, idticketL,estadoL);
+                Log.d("Update Nube","Bajar");
 
             }
         };timerr.schedule(task,10,TiempoTimer*1000);
@@ -126,7 +128,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                     text.setText(dni); //lo coloca en el editext
                 }
-                bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo=" + dni);
+
+                DbHelper bdobjj = new DbHelper(MainActivity.this);
+                SQLiteDatabase dbw = bdobjj.getReadableDatabase();
+                dbw.execSQL("UPDATE "+evento+" SET estado='invalida' WHERE idticket='"+dni+"'");
+
+
                 if (modifica(dni)) { //si modifica
 //
                     imgOk.setVisibility(View.VISIBLE);
@@ -222,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
         if (filas.moveToNext()) {
             db.execSQL("UPDATE " + evento + " SET estado='invalida' WHERE DNI= " + dni + " OR idticket= " + dni + "");
             return true;
+
         }
         return false;
     }
@@ -338,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        public void sincronizacion1(String URL, String event, String[] idticketL){
+        public void sincronizacion1(String URL, String event, String[] idticketL,String[] estadoL){
         try {
             if (conectadoAInternet()) {
                 JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
@@ -352,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
                             Map<String, String> parametros = new HashMap<>();
                             parametros.put("tabla", event);
                             parametros.put("idticket", idticketL[i]);
+                            parametros.put("estado", estadoL[i]);
 
                         }
 
