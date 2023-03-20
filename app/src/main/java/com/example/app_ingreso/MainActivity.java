@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         //--------------------------------------------------------------------------------------
         DbHelper bdobj = new DbHelper(this);
         SQLiteDatabase dbr = bdobj.getReadableDatabase();
-        Cursor filas = dbr.rawQuery("SELECT * FROM "+evento+" WHERE estado='valido' AND (DNI= "+dni+"" +
+        Cursor filas = dbr.rawQuery("SELECT * FROM "+evento+" WHERE estado='valida' AND (DNI= "+dni+"" +
                 " OR idticket= "+dni+")" ,null);
         if (filas.moveToNext()){
             db.execSQL("UPDATE "+evento+" SET estado='invalida' WHERE DNI= "+dni+" OR idticket= "+dni+"");
@@ -369,7 +369,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     }
-                }, error -> Toast.makeText(getApplicationContext(), "Error de conttablas", Toast.LENGTH_SHORT).show()
+                }, error -> Toast.makeText(getApplicationContext(), "Error de sincronizacion", Toast.LENGTH_SHORT).show()
                 );
                 requestQueue = Volley.newRequestQueue(this);
                 requestQueue.add(jsonArrayRequest);
