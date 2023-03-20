@@ -136,10 +136,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     text.setText(dni); //lo coloca en el editext
                 }
-
-                DbHelper bdobjj = new DbHelper(MainActivity.this);
-                SQLiteDatabase dbw = bdobjj.getReadableDatabase();
-                dbw.execSQL("UPDATE "+evento+" SET estado='invalida' WHERE idticket='"+dni+"'");
+//
+//                DbHelper bdobjj = new DbHelper(MainActivity.this);
+//                SQLiteDatabase dbw = bdobjj.getReadableDatabase();
+//                dbw.execSQL("UPDATE "+evento+" SET estado='invalida' WHERE idticket='"+dni+"'");
 
 
                 if (modifica(dni)) { //si modifica
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         //--------------------------------------------------------------------------------------
         DbHelper bdobj = new DbHelper(this);
         SQLiteDatabase dbr = bdobj.getReadableDatabase();
-        Cursor filas = dbr.rawQuery("SELECT * FROM "+evento+" WHERE estado='valido' AND (DNI= "+dni+"" +
+        Cursor filas = dbr.rawQuery("SELECT * FROM "+evento+" WHERE estado='valida' AND (DNI= "+dni+"" +
                 " OR idticket= "+dni+")" ,null);
         if (filas.moveToNext()){
             db.execSQL("UPDATE "+evento+" SET estado='invalida' WHERE DNI= "+dni+" OR idticket= "+dni+"");
