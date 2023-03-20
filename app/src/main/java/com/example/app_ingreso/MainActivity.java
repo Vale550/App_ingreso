@@ -6,10 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -41,7 +38,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -101,15 +97,12 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("Carga bd local",filas.getString(1));
                         Log.d("Carga bd local",filas.getString(3));
 
-                        String idticket=filas.getString(1);
-                        String estado=filas.getString(1);
-
-                        idticketL[i]= idticket;
-                        estadoL[i]= estado;
+                        idticketL[i]= filas.getString(1);
+                        estadoL[i]= filas.getString(3);
                         i++;
                     }while (filas.moveToNext());
                 }
-                sincronizacion1("https://appingresos.000webhostapp.com/Cargartabla.php?tabla="+evento,eventoc);
+                sincronizacion1("https://appingresos.000webhostapp.com/Cargartabla.php?tabla="+evento,eventoc,idticketL);
 
             }
         };timerr.schedule(task,10,TiempoTimer*1000);
@@ -345,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        public void sincronizacion1(String URL, String event){
+        public void sincronizacion1(String URL, String event, String[] idticketL){
         try {
             if (conectadoAInternet()) {
                 JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
@@ -355,51 +348,10 @@ public class MainActivity extends AppCompatActivity {
                         idticketN = new String[response.length()];
                         JSONObject jsonObject = null;
                         for (int i = 0; i < response.length(); i++) {
-                            try {
-
-                                jsonObject = response.getJSONObject(i);
-                                estadoN [i] = jsonObject.getString("estado");
-                                idticketN [i] = jsonObject.getString("idticket");
-
-                                if (estadoL[i] == "inValida"){
-                                    sincronizacion2("https://appingresos.000webhostapp.com/Update.php",i);
-                                }
-
-
-                            } catch (JSONException e) {
-                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                    }
-                }, error -> Toast.makeText(getApplicationContext(), "Error de conttablas", Toast.LENGTH_SHORT).show()
-                );
-                requestQueue = Volley.newRequestQueue(this);
-                requestQueue.add(jsonArrayRequest);
-            }
-            else {
-                //Mensaje "Se requiere internet"
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public void sincronizacion2(String URL,int ii){
-        String eventoc = getIntent().getStringExtra("evento");
-        String evento = "a" + eventoc;
-        try {
-            if (conectadoAInternet()) {
-                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        JSONObject jsonObject = null;
-                        for (int i = 0; i < response.length(); i++) {
 
                             Map<String, String> parametros = new HashMap<>();
-                            parametros.put("tabla", eventoc);
-                            parametros.put("idticket", idticketL[ii]);
+                            parametros.put("tabla", event);
+                            parametros.put("idticket", idticketL[i]);
 
                         }
 
