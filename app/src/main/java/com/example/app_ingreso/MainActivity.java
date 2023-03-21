@@ -106,9 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         i++;
                     }while (filas.moveToNext());
                 }
-                Log.d("Update Nube", "Subir");
-                sincronizacion1("https://appingresos.000webhostapp.com/Update.php", eventoc, idticketL, estadoL);
-                Log.d("Update Nube", "Bajar");
+
 
             }
         };
