@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         String eventoc = getIntent().getStringExtra("evento");
         String evento = "a" + eventoc;
-        int TiempoTimer = 20;//Segundos
+        int TiempoTimer = 120;//Segundos
         Timer timerr = new Timer();
         TimerTask task = new TimerTask() {
             @Override
@@ -90,19 +90,21 @@ public class MainActivity extends AppCompatActivity {
 
                 DbHelper bdobj = new DbHelper(MainActivity.this);
                 SQLiteDatabase dbr = bdobj.getReadableDatabase();
-                @SuppressLint("Recycle") Cursor filas = dbr.rawQuery("SELECT * FROM " + evento + "", null);
+                Cursor filas = dbr.rawQuery("SELECT * FROM "+evento+"",null);
                 idticketL = new String[filas.getCount()];
                 estadoL = new String[filas.getCount()];
                 int i = 0;
-                if (filas.moveToNext()) {
+                if (filas.moveToNext()){
                     do {
-                        Log.d("Carga bd local", filas.getString(1));
-                        Log.d("Carga bd local", filas.getString(3));
+                        Log.d("Carga bd DBN",filas.getString(1));
+                        Log.d("Carga bd DBN",filas.getString(3));
+                        Log.d("Carga bd DBN",eventoc);
 
-                        idticketL[i] = filas.getString(1);
-                        estadoL[i] = filas.getString(3);
+                        idticketL[i]= filas.getString(1);
+                        estadoL[i]= filas.getString(3);
+                        sincronizacion1("https://appingresos.000webhostapp.com/uppdate.php?tabla=" + eventoc + "&idticket="+idticketL[i]+ "&estado="+estadoL[i]);
                         i++;
-                    } while (filas.moveToNext());
+                    }while (filas.moveToNext());
                 }
                 Log.d("Update Nube", "Subir");
                 sincronizacion1("https://appingresos.000webhostapp.com/Update.php", eventoc, idticketL, estadoL);
@@ -334,56 +336,25 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        //Consultas BDN
-        public void buscarUsuarios (String URL){
-            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, response -> {
-                JSONObject jsonObject;
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        String[] resl = new String[response.length()];
-                        jsonObject = response.getJSONObject(i);
-                        Log.d("Debug while", jsonObject.getString("id"));
-                        text.setText(jsonObject.getString("id"));
+    //Consultas BDN
+    //No tocar
+    public void sincronizacion1 (String URL){
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, response -> {
+            JSONObject jsonObject;
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    jsonObject = response.getJSONObject(i);
 
-                    } catch (JSONException e) {
-                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
-            }, error -> Toast.makeText(getApplicationContext(), "Error de Conexión", Toast.LENGTH_SHORT).show()
-            );
-            requestQueue = Volley.newRequestQueue(this);
-            requestQueue.add(jsonArrayRequest);
-
-        }
-
-        public void sincronizacion1(String URL, String event, String[] idticketL,String[] estadoL){
-        try {
-            if (conectadoAInternet()) {
-                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, response -> {
-                    estadoN = new String[response.length()];
-                    idticketN = new String[response.length()];
-                    for (int i = 0; i < response.length(); i++) {
-
-                        Map<String, String> parametros = new HashMap<>();
-                        parametros.put("tabla", event);
-                        parametros.put("idticket", idticketL[i]);
-                        parametros.put("estado", estadoL[i]);
-
-                    }
-
-                }, error -> Toast.makeText(getApplicationContext(), "Error de sincronizacion", Toast.LENGTH_SHORT).show()
-                );
-                requestQueue = Volley.newRequestQueue(this);
-                requestQueue.add(jsonArrayRequest);
             }
-            else {
-                //Mensaje "Se requiere internet"
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
+        }, error -> Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT)
+        );
+        requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+
     }
+
 }
