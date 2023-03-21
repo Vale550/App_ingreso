@@ -199,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ignored) {
 //
         }
+        text.findFocus();
     }
 
     ///////////////////COMPRUEBA CONEXION
