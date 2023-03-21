@@ -23,7 +23,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -31,7 +30,6 @@ import com.example.app_ingreso.bd.DbHelper;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -78,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         String eventoc = getIntent().getStringExtra("evento");
         String evento = "a" + eventoc;
-        int TiempoTimer = 20;//Segundos
+        int TiempoTimer = 120;//Segundos
         Timer timerr = new Timer();
         TimerTask task = new TimerTask() {
             @Override
@@ -92,17 +90,16 @@ public class MainActivity extends AppCompatActivity {
                 int i = 0;
                 if (filas.moveToNext()){
                     do {
-                        Log.d("Carga bd local",filas.getString(1));
-                        Log.d("Carga bd local",filas.getString(3));
+                        Log.d("Carga bd DBN",filas.getString(1));
+                        Log.d("Carga bd DBN",filas.getString(3));
+                        Log.d("Carga bd DBN",eventoc);
 
                         idticketL[i]= filas.getString(1);
                         estadoL[i]= filas.getString(3);
+                        sincronizacion1("https://appingresos.000webhostapp.com/uppdate.php?tabla=" + eventoc + "&idticket="+idticketL[i]+ "&estado="+estadoL[i]);
                         i++;
                     }while (filas.moveToNext());
                 }
-                Log.d("Update Nube","Subir");
-                    sincronizacion1("https://appingresos.000webhostapp.com/Update.php",eventoc, idticketL,estadoL);
-                Log.d("Update Nube","Bajar");
 
             }
         };timerr.schedule(task,10,TiempoTimer*1000);
@@ -198,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
     }
     public boolean conectadoAInternet() throws IOException, InterruptedException {
         String comando = "ping -c 1 google.com";
-        return (Runtime.getRuntime().exec (comando).waitFor() == 0);
+        //return (Runtime.getRuntime().exec (comando).waitFor() == 0);
+        return true;
     }
     public void nroUsadasCompradas() {
         String eventoc = getIntent().getStringExtra("evento");
@@ -269,118 +267,83 @@ public class MainActivity extends AppCompatActivity {
                 text.setText(dni); //lo coloca en el editext
                 bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo=" + dni);
                 if (modifica(dni)) { //si modifica
-                        imgOk.setVisibility(View.VISIBLE);
-                        imgError.setVisibility(View.INVISIBLE);
+                    imgOk.setVisibility(View.VISIBLE);
+                    imgError.setVisibility(View.INVISIBLE);
                 } else { //si no modifica
-                        imgError.setVisibility(View.VISIBLE);
-                        imgOk.setVisibility(View.INVISIBLE);
-                    }
+                    imgError.setVisibility(View.VISIBLE);
+                    imgOk.setVisibility(View.INVISIBLE);
                 }
+            }
         }else{
             super.onActivityResult(requestCode, resultcode, data);
         }
 
     }
-        public static boolean isNumeric (String comprueba){
+    public static boolean isNumeric (String comprueba){
 
-            boolean resultado;
+        boolean resultado;
 
-            try {
-                Integer.parseInt(comprueba);
-                resultado = true;
-            } catch (NumberFormatException excepcion) {
-                resultado = false;
-            }
-
-            return resultado;
+        try {
+            Integer.parseInt(comprueba);
+            resultado = true;
+        } catch (NumberFormatException excepcion) {
+            resultado = false;
         }
 
+        return resultado;
+    }
 
-        //Insertar/actualizar BDN
-        private void bdnpost (String URL){
-            try {
 
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> Toast.makeText(getApplicationContext(), "Operacion exitosa", Toast.LENGTH_SHORT), error -> {
+    //Insertar/actualizar BDN
+    private void bdnpost (String URL){
+        try {
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> Toast.makeText(getApplicationContext(), "Operacion exitosa", Toast.LENGTH_SHORT), error -> {
 //
 //                    imgError.setVisibility(View.VISIBLE);
 //                    imgOk.setVisibility(View.INVISIBLE);
 
-                }) {
-                    @NonNull
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> parametros = new HashMap<>();
-                        Log.d("codigo", text.getText().toString());
-                        parametros.put("codigo", text.getText().toString());
+            }) {
+                @NonNull
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> parametros = new HashMap<>();
+                    Log.d("codigo", text.getText().toString());
+                    parametros.put("codigo", text.getText().toString());
 
-                        return parametros;
+                    return parametros;
 
-                    }
-
-                };
-                requestQueue = Volley.newRequestQueue(this);
-                requestQueue.add(stringRequest);
-
-            } catch (Exception e) {
-                Log.d("D1", "Error");
-            }
-
-        }
-
-        //Consultas BDN
-        public void buscarUsuarios (String URL){
-            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, response -> {
-                JSONObject jsonObject;
-                for (int i = 0; i < response.length(); i++) {
-                    try {
-                        String[] resl = new String[response.length()];
-                        jsonObject = response.getJSONObject(i);
-                        Log.d("Debug while", jsonObject.getString("id"));
-                        text.setText(jsonObject.getString("id"));
-
-                    } catch (JSONException e) {
-                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
                 }
 
-            }, error -> Toast.makeText(getApplicationContext(), "Error de Conexión", Toast.LENGTH_SHORT).show()
-            );
+            };
             requestQueue = Volley.newRequestQueue(this);
-            requestQueue.add(jsonArrayRequest);
+            requestQueue.add(stringRequest);
 
+        } catch (Exception e) {
+            Log.d("D1", "Error");
         }
 
-        public void sincronizacion1(String URL, String event, String[] idticketL,String[] estadoL){
-        try {
-            if (conectadoAInternet()) {
-                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        estadoN = new String[response.length()];
-                        idticketN = new String[response.length()];
-                        JSONObject jsonObject = null;
-                        for (int i = 0; i < response.length(); i++) {
-
-                            Map<String, String> parametros = new HashMap<>();
-                            parametros.put("tabla", event);
-                            parametros.put("idticket", idticketL[i]);
-                            parametros.put("estado", estadoL[i]);
-
-                        }
-
-                    }
-                }, error -> Toast.makeText(getApplicationContext(), "Error de sincronizacion", Toast.LENGTH_SHORT).show()
-                );
-                requestQueue = Volley.newRequestQueue(this);
-                requestQueue.add(jsonArrayRequest);
-            }
-            else {
-                //Mensaje "Se requiere internet"
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
+
+    //Consultas BDN
+    //No tocar
+    public void sincronizacion1 (String URL){
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, response -> {
+            JSONObject jsonObject;
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    jsonObject = response.getJSONObject(i);
+
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }, error -> Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT)
+        );
+        requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+
+    }
+
 }
