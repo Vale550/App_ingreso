@@ -1,16 +1,20 @@
 package com.example.app_ingreso;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.example.app_ingreso.bd.DbHelper;
@@ -22,11 +26,17 @@ public class List1 extends AppCompatActivity {
     ImageView imgHome, imgList, imgLogout, imgWifiNo, imgWifiSi;
     ConstraintLayout navigationView;
     EditText nameEvento;
+    TableLayout table;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list1);
+        int nightModeFlags = getApplicationContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {/* si esta activo el modo oscuro lo desactiva */
+            AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_NO);
+        }
         imgHome = findViewById(R.id.imgHome);
         imgList = findViewById(R.id.imgList);
         imgLogout= findViewById(R.id.imgLogout);
@@ -36,6 +46,7 @@ public class List1 extends AppCompatActivity {
         nameEvento= findViewById(R.id.nameEvento);
         txtEntradasCompradas=findViewById(R.id.txtEntradasCompradas);
         txtEntradasUsadas=findViewById(R.id.txtEntradasUsadas);
+        table= findViewById(R.id.table);
         nameEvento.setText(getIntent().getStringExtra("evento"));
         imgHome.setOnClickListener(view -> {
             Intent act1 = new Intent(List1.this, Selevento.class);
@@ -50,6 +61,7 @@ public class List1 extends AppCompatActivity {
             startActivity(act3);
         });
         nroUsadasCompradas();
+        llenarTabla();
         try {
             if (conectadoAInternet()){
                 imgWifiSi.setVisibility(View.VISIBLE);
@@ -59,9 +71,7 @@ public class List1 extends AppCompatActivity {
                 imgWifiSi.setVisibility(View.INVISIBLE);
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -82,6 +92,7 @@ public class List1 extends AppCompatActivity {
             } while (filas.moveToNext());
         }
         Cursor filas1 = dbr.rawQuery("SELECT COUNT('idticket') FROM " + evento + "", null);
+
         if (filas1.moveToFirst()) {
             do {
                 String codigo1 = filas1.getString(0);
@@ -89,5 +100,20 @@ public class List1 extends AppCompatActivity {
             } while (filas1.moveToNext());
         }
     }
+    @SuppressLint("SetTextI18n")
+    public void llenarTabla(){
+        String eventoc = getIntent().getStringExtra("evento");
+        String evento = "a" + eventoc;
+        DbHelper bdobj = new DbHelper(this);
+        SQLiteDatabase dbr = bdobj.getReadableDatabase();
+        Cursor filas = dbr.rawQuery("SELECT * FROM "+evento+"", null);
+        int cont = filas.getCount();
+        for (int i=0; i<cont; i++){
+            TableRow currentRow= new TableRow(getBaseContext());
+            TextView currentTextView= new TextView(getBaseContext());
+            currentTextView.setText("Fila numero "+(i+1));
+            table.addView(currentRow);
+        }
 
+    }
 }
