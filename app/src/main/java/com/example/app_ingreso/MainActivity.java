@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         txtEntradasCompradas=findViewById(R.id.txtEntradasCompradas);
         txtEntradasUsadas=findViewById(R.id.txtEntradasUsadas);
 
+
         String eventoc = getIntent().getStringExtra("evento");
         String evento = "a" + eventoc;
         int TiempoTimer = 120;//Segundos
