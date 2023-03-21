@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:forceDarkAllowed="true"
-    tools:context=".List1">
+    android:forceDarkAllowed="false"
+    tools:context=".List1"
+    tools:targetApi="q">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navigationView"
@@ -145,21 +146,23 @@
 
     <TableLayout
         android:id="@+id/table"
-        android:layout_width="352dp"
-        android:layout_height="430dp"
-        android:layout_marginTop="96dp"
+        android:layout_width="361dp"
+        android:layout_height="456dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/navigationView"
-        app:layout_constraintTop_toBottomOf="@+id/imgEntradasCompradas">
+        app:layout_constraintTop_toBottomOf="@+id/txtEntradasCompradas"
+        app:layout_constraintVertical_bias="0.0">
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent" >
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </TableRow>
 
         <TableRow
             android:layout_width="match_parent"

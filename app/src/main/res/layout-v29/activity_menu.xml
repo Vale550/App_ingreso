@@ -6,9 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/activity_menu_scene"
-    android:forceDarkAllowed="false"
-    tools:context=".Menu"
-    tools:targetApi="q">
+    android:forceDarkAllowed="true"
+    tools:context=".Menu">
 
     <TextView
         android:id="@+id/txtUsuario"

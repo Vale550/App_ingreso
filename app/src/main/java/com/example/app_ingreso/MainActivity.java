@@ -4,6 +4,7 @@ package com.example.app_ingreso;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -19,11 +20,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -31,7 +32,6 @@ import com.example.app_ingreso.bd.DbHelper;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,7 +60,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        int nightModeFlags = getApplicationContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES) {/* si esta activo el modo oscuro lo desactiva */
+            AppCompatDelegate.setDefaultNightMode(
+                    AppCompatDelegate.MODE_NIGHT_NO);
+        }
         btnscan = findViewById(R.id.btn_scan);
         btn_acp = findViewById(R.id.btn_aceptar);
         text = findViewById(R.id.Texto);
@@ -68,13 +72,13 @@ public class MainActivity extends AppCompatActivity {
         imgError = findViewById(R.id.imgError);
         imgHome = findViewById(R.id.imgHome);
         imgList = findViewById(R.id.imgList);
-        imgLogout= findViewById(R.id.imgLogout);
-        imgWifiNo= findViewById(R.id.imgWifiNo);
-        imgWifiSi= findViewById(R.id.imgWifiSi);
+        imgLogout = findViewById(R.id.imgLogout);
+        imgWifiNo = findViewById(R.id.imgWifiNo);
+        imgWifiSi = findViewById(R.id.imgWifiSi);
         navigationView = findViewById(R.id.navigationView);
-        nameEvento= findViewById(R.id.nameEvento);
-        txtEntradasCompradas=findViewById(R.id.txtEntradasCompradas);
-        txtEntradasUsadas=findViewById(R.id.txtEntradasUsadas);
+        nameEvento = findViewById(R.id.nameEvento);
+        txtEntradasCompradas = findViewById(R.id.txtEntradasCompradas);
+        txtEntradasUsadas = findViewById(R.id.txtEntradasUsadas);
 
         String eventoc = getIntent().getStringExtra("evento");
         String evento = "a" + eventoc;
@@ -86,76 +90,30 @@ public class MainActivity extends AppCompatActivity {
 
                 DbHelper bdobj = new DbHelper(MainActivity.this);
                 SQLiteDatabase dbr = bdobj.getReadableDatabase();
-                Cursor filas = dbr.rawQuery("SELECT * FROM "+evento+"",null);
+                @SuppressLint("Recycle") Cursor filas = dbr.rawQuery("SELECT * FROM " + evento + "", null);
                 idticketL = new String[filas.getCount()];
                 estadoL = new String[filas.getCount()];
                 int i = 0;
-                if (filas.moveToNext()){
+                if (filas.moveToNext()) {
                     do {
-                        Log.d("Carga bd local",filas.getString(1));
-                        Log.d("Carga bd local",filas.getString(3));
+                        Log.d("Carga bd local", filas.getString(1));
+                        Log.d("Carga bd local", filas.getString(3));
 
-                        idticketL[i]= filas.getString(1);
-                        estadoL[i]= filas.getString(3);
+                        idticketL[i] = filas.getString(1);
+                        estadoL[i] = filas.getString(3);
                         i++;
-                    }while (filas.moveToNext());
+                    } while (filas.moveToNext());
                 }
-                Log.d("Update Nube","Subir");
-                    sincronizacion1("https://appingresos.000webhostapp.com/Update.php",eventoc, idticketL,estadoL);
-                Log.d("Update Nube","Bajar");
+                Log.d("Update Nube", "Subir");
+                sincronizacion1("https://appingresos.000webhostapp.com/Update.php", eventoc, idticketL, estadoL);
+                Log.d("Update Nube", "Bajar");
 
             }
-        };timerr.schedule(task,10,TiempoTimer*1000);
-        //////////////////////////
-        text.setOnEditorActionListener((text, actionId, keyEvent) -> {
-            if(keyEvent.getAction() == KeyEvent.KEYCODE_ENTER) {
-                btn_acp.callOnClick();
+        };
+        timerr.schedule(task, 10, TiempoTimer * 1000);
 
-                return true;
-
-            }
-            return false;
-        });
-        ////////////////////
         nameEvento.setText(getIntent().getStringExtra("evento"));
-        btn_acp.setOnClickListener(v -> {
-            try {
-                dni = text.getText().toString();
-                String res = text.getText().toString();
-                String[] parts = res.split("&"); //divide
-                int longitud = res.length();
-                if (longitud <= 10) { //ticket
-                    dni = res;
-                    text.setText(dni); //lo coloca en el editext
-                } else { //mas de 10
-                    String comprueba = parts[4]; //parte a comprobar
-                    if (Character.isDigit(Integer.parseInt(comprueba))) { //si es numero
-                        dni = parts[1]; //dni viejo
-                    } else { //si no es numero
-                        dni = parts[4]; //dni nuevo
-                    }
-                    text.setText(dni); //lo coloca en el editext
-                }
-
-                DbHelper bdobjj = new DbHelper(MainActivity.this);
-                SQLiteDatabase dbw = bdobjj.getReadableDatabase();
-                dbw.execSQL("UPDATE "+evento+" SET estado='invalida' WHERE idticket='"+dni+"'");
-
-
-                if (modifica(dni)) { //si modifica
-//
-                    imgOk.setVisibility(View.VISIBLE);
-                    imgError.setVisibility(View.INVISIBLE);
-                } else { //si no modifica
-//
-                    imgError.setVisibility(View.VISIBLE);
-                    imgOk.setVisibility(View.INVISIBLE);
-                }
-                text.setText("");
-            } catch (Exception ignored) {
-//
-            }
-        });
+        btn_acp.setOnClickListener(v -> recortar());
         imgHome.setOnClickListener(view -> {
             Intent act1 = new Intent(MainActivity.this, Selevento.class);
             startActivity(act1);
@@ -184,10 +142,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         try {
-            if (conectadoAInternet()){
+            if (conectadoAInternet()) {
                 imgWifiSi.setVisibility(View.VISIBLE);
                 imgWifiNo.setVisibility(View.INVISIBLE);
-            }else {
+            } else {
                 imgWifiNo.setVisibility(View.VISIBLE);
                 imgWifiSi.setVisibility(View.INVISIBLE);
             }
@@ -195,7 +153,55 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+        click();
+
     }
+    public void click() {
+        text.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN)
+            {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    recortar();
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+
+
+    ////tecla enter
+    public void recortar(){
+        try {
+            dni = text.getText().toString();
+            String[] parts = dni.split("&"); //divide
+            int longitud = dni.length();
+            if (longitud > 10){ //mas de 10
+                String comprueba = parts[4]; //parte a comprobar
+                if (Character.isDigit(Integer.parseInt(comprueba))) { //si es numero
+                    dni = parts[1]; //dni viejo
+                } else { //si no es numero
+                    dni = parts[4]; //dni nuevo
+                }
+                text.setText(dni); //lo coloca en el editext
+            }
+
+            if (modifica(dni)) { //si modifica
+//
+                imgOk.setVisibility(View.VISIBLE);
+                imgError.setVisibility(View.INVISIBLE);
+            } else { //si no modifica
+//
+                imgError.setVisibility(View.VISIBLE);
+                imgOk.setVisibility(View.INVISIBLE);
+            }
+            text.setText("");
+        } catch (Exception ignored) {
+//
+        }
+    }
+
+    ///////////////////COMPRUEBA CONEXION
     public boolean conectadoAInternet() throws IOException, InterruptedException {
         String comando = "ping -c 1 google.com";
         return (Runtime.getRuntime().exec (comando).waitFor() == 0);
@@ -353,22 +359,18 @@ public class MainActivity extends AppCompatActivity {
         public void sincronizacion1(String URL, String event, String[] idticketL,String[] estadoL){
         try {
             if (conectadoAInternet()) {
-                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        estadoN = new String[response.length()];
-                        idticketN = new String[response.length()];
-                        JSONObject jsonObject = null;
-                        for (int i = 0; i < response.length(); i++) {
+                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, response -> {
+                    estadoN = new String[response.length()];
+                    idticketN = new String[response.length()];
+                    for (int i = 0; i < response.length(); i++) {
 
-                            Map<String, String> parametros = new HashMap<>();
-                            parametros.put("tabla", event);
-                            parametros.put("idticket", idticketL[i]);
-                            parametros.put("estado", estadoL[i]);
-
-                        }
+                        Map<String, String> parametros = new HashMap<>();
+                        parametros.put("tabla", event);
+                        parametros.put("idticket", idticketL[i]);
+                        parametros.put("estado", estadoL[i]);
 
                     }
+
                 }, error -> Toast.makeText(getApplicationContext(), "Error de sincronizacion", Toast.LENGTH_SHORT).show()
                 );
                 requestQueue = Volley.newRequestQueue(this);
