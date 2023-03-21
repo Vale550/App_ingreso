@@ -125,8 +125,7 @@ public class Menu extends AppCompatActivity {
 
     public boolean conectadoAInternet() throws IOException, InterruptedException {
         String comando = "ping -c 1 google.com";
-        //return (Runtime.getRuntime().exec (comando).waitFor() == 0);
-        return true;
+        return (Runtime.getRuntime().exec (comando).waitFor() == 0);
     }
 
     public boolean carga (String nom){
@@ -307,17 +306,18 @@ public class Menu extends AppCompatActivity {
                     try {
                         jsonObject = response.getJSONObject(i);
                         String nroAdmin=jsonObject.getString("nroAdmin");
-                        String usernamee=jsonObject.getString("username");
-                        String passwordd=jsonObject.getString("password");
+                        String username=jsonObject.getString("username");
+                        String password=jsonObject.getString("password");
                         String nroLocal=jsonObject.getString("nroLocal");
-                        Log.d("CargaUSER-1", usernamee);
+                        Log.d("CargaUSER-1", username);
                         Log.d("Length", String.valueOf(response.length()));
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
-                        Cursor filass = db.rawQuery("SELECT * FROM admin WHERE username='"+usernamee+"' and password='"+passwordd+"'",null);
+                        Cursor filass = db.rawQuery("SELECT * FROM admin",null);
 
-                        if (filass.moveToNext()){}else {
-                            db.execSQL("INSERT INTO admin (nroAdmin,username,password,nroLocal) VALUES ('" + nroAdmin + "','" + usernamee + "','" + passwordd + "','" + nroLocal + "') ");
-                            Log.d("CargaUSER-2", usernamee);
+                        while (filass.moveToNext()) {}
+                        {
+                            db.execSQL("INSERT INTO admin (nroAdmin,username,password,nroLocal) VALUES ('" + nroAdmin + "','" + username + "','" + password + "','" + nroLocal + "') ");
+                            Log.d("CargaUSER-2", username);
                         }
 
                     } catch (JSONException e) {
