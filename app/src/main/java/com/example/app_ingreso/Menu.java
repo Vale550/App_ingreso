@@ -275,30 +275,6 @@ public class Menu extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-//    public void conttablas(String URL){
-//        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                JSONObject jsonObject = null;
-//                for (int i = 0; i < response.length(); i++) {
-//                    try {
-//                        jsonObject = response.getJSONObject(i);
-//                        String cant=jsonObject.getString("");
-//                        conttablesN=Integer.valueOf(cant);
-//
-//                    } catch (JSONException e) {
-//                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//
-//            }
-//        }, error -> Toast.makeText(getApplicationContext(), "Error de conttablas", Toast.LENGTH_SHORT).show()
-//        );
-//        requestQueue= Volley.newRequestQueue(this);
-//        requestQueue.add(jsonArrayRequest);
-//    }
-
-
     public void LoadUsuarios(String URL){
         JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
             @Override

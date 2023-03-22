@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         i++;
                     }while (filas.moveToNext());
                 }
-
+                sincronizacion2("https://appingresos.000webhostapp.com/Cargartabla.php?tabla="+eventoc,evento);
 
             }
         };
@@ -342,6 +342,38 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < response.length(); i++) {
                 try {
                     jsonObject = response.getJSONObject(i);
+
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }, error -> Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT)
+        );
+        requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+
+    }
+    public void sincronizacion2 (String URL, String eve){
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, response -> {
+            JSONObject jsonObject;
+            for (int i = 0; i    < response.length(); i++) {
+                try {
+                    jsonObject = response.getJSONObject(i);
+                    String estado = jsonObject.getString("estado");
+                    String idticket = jsonObject.getString("idticket");
+                        DbHelper bdobj = new DbHelper(this);
+                        SQLiteDatabase dbr = bdobj.getReadableDatabase();
+                        Cursor filas = dbr.rawQuery("SELECT * FROM "+eve+" WHERE idticket='"+idticket+"'", null);
+                        Log.d("Test2",estado);
+                        if (filas.moveToFirst()) {
+                                String estad = filas.getString(3);
+                                Log.d("Test3",estad);
+                                if (estado.equals("invalida")){
+                                    dbr.execSQL("UPDATE "+eve+" SET estado='invalida' WHERE idticket='"+idticket+"'");
+                                }
+
+                        }
 
                 } catch (JSONException e) {
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
