@@ -358,9 +358,6 @@ public class MainActivity extends AppCompatActivity {
             try {
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, response -> Toast.makeText(getApplicationContext(), "Operacion exitosa", Toast.LENGTH_SHORT), error -> {
-//
-//                    imgError.setVisibility(View.VISIBLE);
-//                    imgOk.setVisibility(View.INVISIBLE);
 
                 }) {
                     @NonNull
