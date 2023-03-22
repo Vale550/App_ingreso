@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -52,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
     ImageView imgOk, imgError, imgHome, imgList, imgLogout, imgWifiNo, imgWifiSi;
     DbHelper dbHelper = new DbHelper(MainActivity.this);
 
-    String [] estadoN, idticketN, estadoL, idticketL;
+    String [] idticketN;
+    String [] estadoL;
+    String [] idticketL;
 
     //Crea el main
     @SuppressLint({"MissingInflatedId", "WrongViewCast"})
@@ -106,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                         i++;
                     }while (filas.moveToNext());
                 }
+                sincronizacion2("https://appingresos.000webhostapp.com/Cargartabla.php?tabla="+eventoc,evento);
 
 
             }
@@ -117,10 +122,6 @@ public class MainActivity extends AppCompatActivity {
         imgHome.setOnClickListener(view -> {
             Intent act1 = new Intent(MainActivity.this, Selevento.class);
             startActivity(act1);
-        });
-        imgList.setOnClickListener(view -> {
-            Intent act2 = new Intent(MainActivity.this, List1.class);
-            startActivity(act2);
         });
         imgLogout.setOnClickListener(view -> {
             Intent act3 = new Intent(MainActivity.this, Menu.class);
@@ -154,8 +155,34 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
         click();
+        new CountDownTimer(1000000000, 5000) {
+
+            @Override
+            public void onTick(long l) {
+                try {
+                    if (conectadoAInternet()) {
+                        imgWifiSi.setVisibility(View.VISIBLE);
+                        imgWifiNo.setVisibility(View.INVISIBLE);
+                    } else {
+                        imgWifiNo.setVisibility(View.VISIBLE);
+                        imgWifiSi.setVisibility(View.INVISIBLE);
+                    }
+
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+
+        }.start();
 
     }
+
+
     public void click() {
         text.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN)
@@ -180,26 +207,46 @@ public class MainActivity extends AppCompatActivity {
                 String comprueba = parts[4]; //parte a comprobar
                 if (Character.isDigit(Integer.parseInt(comprueba))) { //si es numero
                     dni = parts[1]; //dni viejo
+
                 } else { //si no es numero
                     dni = parts[4]; //dni nuevo
                 }
                 text.setText(dni); //lo coloca en el editext
             }
-
-            if (modifica(dni)) { //si modifica
-//
-                imgOk.setVisibility(View.VISIBLE);
-                imgError.setVisibility(View.INVISIBLE);
-            } else { //si no modifica
-//
-                imgError.setVisibility(View.VISIBLE);
-                imgOk.setVisibility(View.INVISIBLE);
+            String eventoc = getIntent().getStringExtra("evento");
+            String evento = "a"+eventoc;
+            DbHelper bdobj = new DbHelper(this);
+            SQLiteDatabase dbr = bdobj.getReadableDatabase();
+            Cursor filas = dbr.rawQuery("SELECT DNI FROM "+evento+" WHERE DNI= '"+dni+"'" ,null);
+            if (filas.getCount()>1){
+                alerta().show();
+            } else {
+                bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo=" + dni);
+                if (modifica(dni)) { //si modifica
+                    imgOk.setVisibility(View.VISIBLE);
+                    imgError.setVisibility(View.INVISIBLE);
+                } else { //si no modifica
+                    imgError.setVisibility(View.VISIBLE);
+                    imgOk.setVisibility(View.INVISIBLE);
+                }
+                text.setText("");
             }
-            text.setText("");
         } catch (Exception ignored) {
 //
         }
         text.findFocus();
+    }
+
+    public AlertDialog alerta() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Atención")
+                .setMessage("Más de una entrada asociada a este DNI. Ingrese idTicket")
+                .setPositiveButton("OK",
+                        (dialog, which) -> {
+
+                        });
+        text.setText("");
+        return builder.create();
     }
 
     ///////////////////COMPRUEBA CONEXION
@@ -241,6 +288,7 @@ public class MainActivity extends AppCompatActivity {
                 " OR idticket= "+dni+")" ,null);
         if (filas.moveToNext()){
             db.execSQL("UPDATE "+evento+" SET estado='invalida' WHERE DNI= "+dni+" OR idticket= "+dni+"");
+            nroUsadasCompradas();
             return true;
 
         }
@@ -274,15 +322,17 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 text.setText(dni); //lo coloca en el editext
-                bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo=" + dni);
-                if (modifica(dni)) { //si modifica
+
+                    bdnpost("https://appingresos.000webhostapp.com/modificar.php?codigo=" + dni);
+                    if (modifica(dni)) { //si modifica
                         imgOk.setVisibility(View.VISIBLE);
                         imgError.setVisibility(View.INVISIBLE);
-                } else { //si no modifica
+                    } else { //si no modifica
                         imgError.setVisibility(View.VISIBLE);
                         imgOk.setVisibility(View.INVISIBLE);
                     }
-                }
+                    }
+
         }else{
             super.onActivityResult(requestCode, resultcode, data);
         }
@@ -354,5 +404,36 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
 
     }
+    public void sincronizacion2 (String URL, String eve){
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, response -> {
+            JSONObject jsonObject;
+            for (int i = 0; i    < response.length(); i++) {
+                try {
+                    jsonObject = response.getJSONObject(i);
+                    String estado = jsonObject.getString("estado");
+                    String idticket = jsonObject.getString("idticket");
+                    DbHelper bdobj = new DbHelper(this);
+                    SQLiteDatabase dbr = bdobj.getReadableDatabase();
+                    Cursor filas = dbr.rawQuery("SELECT * FROM "+eve+" WHERE idticket='"+idticket+"'", null);
+                    Log.d("Test2",estado);
+                    if (filas.moveToFirst()) {
+                        String estad = filas.getString(3);
+                        Log.d("Test3",estad);
+                        if (estado.equals("invalida")){
+                            dbr.execSQL("UPDATE "+eve+" SET estado='invalida' WHERE idticket='"+idticket+"'");
+                        }
 
+                    }
+
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }, error -> Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT)
+        );
+        requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+
+    }
 }

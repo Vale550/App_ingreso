@@ -76,7 +76,7 @@
         app:layout_constraintHorizontal_bias="0.731"
         app:layout_constraintStart_toEndOf="@+id/navigationView"
         app:layout_constraintTop_toBottomOf="@+id/imgEntradasCompradas"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.054"
         tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -112,7 +112,7 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imgHome"
-            app:srcCompat="@drawable/list" />
+            app:srcCompat="@drawable/scanner" />
 
         <ImageView
             android:id="@+id/imgLogout"
@@ -165,14 +165,14 @@
 
     <ImageView
         android:id="@+id/imgEntradasCompradas"
-        android:layout_width="98dp"
-        android:layout_height="107dp"
+        android:layout_width="97dp"
+        android:layout_height="105dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.794"
         app:layout_constraintStart_toEndOf="@+id/navigationView"
         app:layout_constraintTop_toBottomOf="@+id/imgError"
-        app:layout_constraintVertical_bias="0.077"
+        app:layout_constraintVertical_bias="0.083"
         app:srcCompat="@drawable/ok"
         tools:ignore="DuplicateIds" />
 

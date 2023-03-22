@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.app_ingreso.bd.DbHelper;
 
@@ -23,7 +24,9 @@ public class Selevento extends AppCompatActivity {
 
     Spinner selector;
     Button btncont;
+    TextView txtSelect;
     DbHelper dbHelper = new DbHelper(Selevento.this);
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +41,7 @@ public class Selevento extends AppCompatActivity {
         }
         selector = findViewById(R.id.selector);
         btncont=findViewById(R.id.btncont);
+        txtSelect= findViewById(R.id.txtSelect);
         DbHelper bdobj = new DbHelper(this);
         SQLiteDatabase dbr = bdobj.getReadableDatabase();
         Log.d("SPINER","emp");
