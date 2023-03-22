@@ -372,7 +372,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (estado.equals("invalida")){
                                     dbr.execSQL("UPDATE "+eve+" SET estado='invalida' WHERE idticket='"+idticket+"'");
                                 }
-
                         }
 
                 } catch (JSONException e) {
